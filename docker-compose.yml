@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: oneview
+      POSTGRES_PASSWORD: oneview
+      POSTGRES_DB: oneview
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oneview"]
+      interval: 5s
+      retries: 5
+
+volumes:
+  pgdata:
