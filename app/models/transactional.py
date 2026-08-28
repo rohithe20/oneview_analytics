@@ -18,9 +18,7 @@ class Student(Base):
     display_name: Mapped[str] = mapped_column(String(100))
     level: Mapped[str] = mapped_column(String(2), default="AS")
     password_hash: Mapped[str] = mapped_column(String(255))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     attempts: Mapped[list[Attempt]] = relationship(back_populates="student")
 
@@ -35,9 +33,7 @@ class Attempt(Base):
         Enum(AttemptStatus, name="attempt_status"), default=AttemptStatus.DRAFT
     )
     notes: Mapped[str | None] = mapped_column(String(300))
-    started_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
