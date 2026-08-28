@@ -1,44 +1,43 @@
-from __future__ import annotations 
+from __future__ import annotations
 
-import csv  
-from collections import defaultdict 
-from pathlib import Path 
+import csv
+from collections import defaultdict
+from pathlib import Path
 
-from sqlalchemy import select 
-from sqlalchemy.orm import Session 
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from app.models import Paper, Question, SubPart, Subject, Topic 
-from app.models.enums import ExamSession 
+from app.models import Paper, Question, Subject, SubPart, Topic
+from app.models.enums import ExamSession
 
-DATA_DIR  = Path(__file__).parent/"data" 
+DATA_DIR = Path(__file__).parent / "data"
 
 
-class SeedError(Exception):  
+class SeedError(Exception):
     """Raised when seed data is invalid. Aborts the whole load"""
-    pass  
+
+    pass
 
 
-def read_csv(filename: str) -> list[dict[str, str]]: 
-    path = DATA_DIR/filename 
-    if not path.exists(): 
-      raise SeedError(f"Missing seed file: {path}")
+def read_csv(filename: str) -> list[dict[str, str]]:
+    path = DATA_DIR / filename
+    if not path.exists():
+        raise SeedError(f"Missing seed file: {path}")
 
-    with path.open(newline="", encoding="utf-8-sig") as f: 
-       return [{k: (v or "").strip() for k, v in row.items()} for row in csv.DictReader(f)]
+    with path.open(newline="", encoding="utf-8-sig") as f:
+        return [{k: (v or "").strip() for k, v in row.items()} for row in csv.DictReader(f)]
 
 
-
-def load_subjects(db: Session) -> dict[str, Subject]: 
-    for row in read_csv("subjects.csv"): 
-      existing = db.scalar( 
-         select(Subject).where(Subject.board == row["board"], Subject.code == row["code"])
-      ) 
-      if existing is None: 
-         db.add(Subject(board=row["board"], code=row["code"], name=row["name"])) 
+def load_subjects(db: Session) -> dict[str, Subject]:
+    for row in read_csv("subjects.csv"):
+        existing = db.scalar(
+            select(Subject).where(Subject.board == row["board"], Subject.code == row["code"])
+        )
+        if existing is None:
+            db.add(Subject(board=row["board"], code=row["code"], name=row["name"]))
 
     db.flush()
     return {s.code: s for s in db.scalars(select(Subject)).all()}
-
 
 
 def load_topics(db: Session, subjects: dict[str, Subject]) -> dict[tuple[str, str], Topic]:
@@ -67,7 +66,6 @@ def load_topics(db: Session, subjects: dict[str, Subject]) -> dict[tuple[str, st
 
     db.flush()
     return {(t.subject.code, t.name): t for t in db.scalars(select(Topic)).all()}
-
 
 
 def load_papers(db: Session, subjects: dict[str, Subject]) -> dict[str, Paper]:
@@ -174,15 +172,15 @@ def load_questions(
 
             marks = int(row["max_marks"])
             if marks <= 0:
-                errors.append(f"questions.csv: max_marks must be positive on Q{q_number} of {paper_ref}")
+                errors.append(
+                    f"questions.csv: max_marks must be positive on Q{q_number} of {paper_ref}"
+                )
                 continue
 
             totals[paper_ref] += marks
 
             existing = db.scalar(
-                select(SubPart).where(
-                    SubPart.question_id == question.id, SubPart.label == label
-                )
+                select(SubPart).where(SubPart.question_id == question.id, SubPart.label == label)
             )
             if existing is None:
                 db.add(

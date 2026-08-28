@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import func, select
 
-from app.models import Paper, Question, SubPart, Subject, Topic
+from app.models import Paper, Question, Subject, SubPart, Topic
 from app.seed.loader import (
     SeedError,
     load_papers,
@@ -86,12 +86,8 @@ def test_unknown_topic_name_aborts(db_session, tmp_path, monkeypatch):
     """A typo in topic_name must fail loudly, not insert a NULL."""
     import app.seed.loader as loader
 
-    (tmp_path / "subjects.csv").write_text(
-        "board,code,name\nCambridge,9709,Mathematics\n"
-    )
-    (tmp_path / "topics.csv").write_text(
-        "subject_code,name,sort_order\n9709,Trigonometry,5\n"
-    )
+    (tmp_path / "subjects.csv").write_text("board,code,name\nCambridge,9709,Mathematics\n")
+    (tmp_path / "topics.csv").write_text("subject_code,name,sort_order\n9709,Trigonometry,5\n")
     (tmp_path / "papers.csv").write_text(
         "paper_ref,subject_code,component,variant,session,year,total_marks,level\n"
         "TEST_PAPER,9709,1,2,MAY_JUNE,2024,4,AS\n"
@@ -111,12 +107,8 @@ def test_mark_total_mismatch_aborts(db_session, tmp_path, monkeypatch):
     """A missing row must be caught by the checksum."""
     import app.seed.loader as loader
 
-    (tmp_path / "subjects.csv").write_text(
-        "board,code,name\nCambridge,9709,Mathematics\n"
-    )
-    (tmp_path / "topics.csv").write_text(
-        "subject_code,name,sort_order\n9709,Trigonometry,5\n"
-    )
+    (tmp_path / "subjects.csv").write_text("board,code,name\nCambridge,9709,Mathematics\n")
+    (tmp_path / "topics.csv").write_text("subject_code,name,sort_order\n9709,Trigonometry,5\n")
     (tmp_path / "papers.csv").write_text(
         "paper_ref,subject_code,component,variant,session,year,total_marks,level\n"
         "TEST_PAPER,9709,1,2,MAY_JUNE,2024,75,AS\n"  # claims 75

@@ -68,9 +68,7 @@ class Question(Base):
     paper_id: Mapped[int] = mapped_column(ForeignKey("papers.id"))
     question_number: Mapped[int]
 
-    __table_args__ = (
-        UniqueConstraint("paper_id", "question_number", name="question_number"),
-    )
+    __table_args__ = (UniqueConstraint("paper_id", "question_number", name="question_number"),)
 
     paper: Mapped[Paper] = relationship(back_populates="questions")
     sub_parts: Mapped[list[SubPart]] = relationship(
