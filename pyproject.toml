@@ -43,5 +43,3 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-
-addopts = "--ignore=tests/test_prediction.py --ignore=tests/test_trend.py --ignore=tests/test_priority.py"

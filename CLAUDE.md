@@ -109,3 +109,11 @@ ruff check . && ruff format .
 - Rule IDs recorded where the spec requires traceability.
 - ruff clean.
 - One commit on a feature branch, PR into main.
+
+
+## Running tools (IMPORTANT)
+
+This project uses `uv`. ALL Python tools must be prefixed with `uv run`:
+`uv run pytest`, `uv run ruff check .`, `uv run alembic ...`. Bare
+`pytest` or `ruff` will fail with "not installed" — they are installed,
+just inside the uv venv.
