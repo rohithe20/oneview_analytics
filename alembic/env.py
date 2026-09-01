@@ -12,7 +12,10 @@ from app.models import *  # noqa: F401,F403
 config = context.config
 
 
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Only default to the app's configured URL if the caller (e.g. a test
+# fixture targeting a separate test database) hasn't already set one.
+if not config.get_main_option("sqlalchemy.url"):
+    config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
