@@ -1,22 +1,58 @@
 {% extends "base.html" %}
+{% import "partials/family_panel.html" as fp %}
 
 {% block title %}Overview{% endblock %}
 {% block page_heading %}Overview{% endblock %}
 
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    function initTrendCharts() {
+        document.querySelectorAll('[data-trend-chart]').forEach(function (el) {
+            var canvas = el.querySelector('canvas');
+            if (!canvas) return;
+            var existing = Chart.getChart(canvas);
+            if (existing) existing.destroy();
+
+            var points = JSON.parse(el.dataset.points || '[]');
+            new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: points.map(function (_, i) { return i + 1; }),
+                    datasets: [{
+                        data: points,
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124, 58, 237, 0.08)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#7c3aed',
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { min: 0, max: 100, ticks: { stepSize: 25 } },
+                    },
+                },
+            });
+        });
+    }
+
+    document.addEventListener('htmx:load', initTrendCharts);
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="grid grid-cols-2 gap-6">
-    <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 min-h-[600px]">
-        <h2 class="text-base font-semibold text-slate-900 mb-4">Pure Mathematics</h2>
-        <div id="family-panel-pure" class="text-sm text-slate-400">
-            Panel coming soon.
-        </div>
+    {% for panel in panels %}
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+        <h2 class="text-base font-semibold text-slate-900 mb-4">{{ panel.label }}</h2>
+        {{ fp.render_family_panel(panel) }}
     </section>
-
-    <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 min-h-[600px]">
-        <h2 class="text-base font-semibold text-slate-900 mb-4">Statistics</h2>
-        <div id="family-panel-statistics" class="text-sm text-slate-400">
-            Panel coming soon.
-        </div>
-    </section>
+    {% endfor %}
 </div>
 {% endblock %}

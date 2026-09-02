@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-screen flex bg-slate-50 text-slate-900 overflow-hidden">
+<body class="h-screen flex bg-slate-50 text-slate-900 overflow-hidden" hx-boost="true">
 
     <aside class="w-60 shrink-0 bg-white border-r border-slate-200 flex flex-col">
         <div class="px-6 py-5 border-b border-slate-200">
@@ -56,16 +56,16 @@
 
             <div class="flex items-center gap-4">
                 <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
-                    <button type="button"
-                            class="px-3 py-1.5 text-sm font-medium rounded-md
-                                   {% if exam_level == 'AS' %}bg-white text-violet-700 shadow-sm{% else %}text-slate-500{% endif %}">
+                    <a href="/overview?level=AS"
+                       class="px-3 py-1.5 text-sm font-medium rounded-md
+                              {% if exam_level == 'AS' %}bg-white text-violet-700 shadow-sm{% else %}text-slate-500 hover:text-slate-700{% endif %}">
                         AS
-                    </button>
-                    <button type="button"
-                            class="px-3 py-1.5 text-sm font-medium rounded-md
-                                   {% if exam_level == 'A' %}bg-white text-violet-700 shadow-sm{% else %}text-slate-500{% endif %}">
+                    </a>
+                    <a href="/overview?level=A"
+                       class="px-3 py-1.5 text-sm font-medium rounded-md
+                              {% if exam_level == 'A' %}bg-white text-violet-700 shadow-sm{% else %}text-slate-500 hover:text-slate-700{% endif %}">
                         A
-                    </button>
+                    </a>
                 </div>
                 <span class="text-sm font-medium text-slate-700">{{ student_name }}</span>
             </div>
