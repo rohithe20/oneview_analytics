@@ -14,6 +14,7 @@ from app.services.trend import classify_trend
 
 MIN_ATTEMPTS_FOR_SUFFICIENT_DATA = 5  # family-level gate, overview-assembly.md
 RECENT_ERROR_WINDOW = 4  # priority-engine.md repeated-error footnote
+PREDICTED_RANGE_MARGIN_PP = 3.0  # mark-scale.md Open Items: width unconfirmed by PO
 
 
 @dataclass
@@ -49,6 +50,13 @@ class FamilyOverview:
 
     has_sufficient_data: bool
     attempts_count: int
+
+    # mark-scale.md — same percentages, expressed against the family's paper total
+    total_marks: int | None
+    average_score_marks: float | None
+    recent_score_marks: float | None
+    predicted_marks_low: float | None
+    predicted_marks_high: float | None
 
 
 def _fetch_attempts(db: Session, student_id: int, exam_level: str, component_family: str):
@@ -164,6 +172,52 @@ def _fetch_available_papers(db: Session, exam_level: str, component_family: str)
         """),
         {"exam_level": exam_level, "component_family": component_family},
     ).scalar_one()
+
+
+def get_family_total_marks(db: Session, exam_level: str, component_family: str) -> int | None:
+    """The total marks of a full paper in this (level, family) scope.
+
+    Read from papers.total_marks via component_families — never hard-coded
+    (docs/specs/mark-scale.md: Pure is 75, Statistics is 60, and neither
+    should be assumed). Papers within a family share one total for MVP; if
+    they ever disagree, the most common total wins. Returns None when no
+    papers are seeded in scope, so the caller can leave mark fields unset
+    rather than fabricate a denominator.
+    """
+    rows = db.execute(
+        text("""
+            SELECT p.total_marks, COUNT(*) AS n
+            FROM papers p
+            JOIN component_families cf ON cf.component = p.component
+            WHERE p.level = :exam_level AND cf.family = :component_family
+            GROUP BY p.total_marks
+            ORDER BY n DESC, p.total_marks DESC
+        """),
+        {"exam_level": exam_level, "component_family": component_family},
+    ).all()
+    return rows[0][0] if rows else None
+
+
+def _percentage_to_marks(percentage: float | None, total_marks: int | None) -> float | None:
+    if percentage is None or total_marks is None:
+        return None
+    return round(percentage / 100 * total_marks, 1)
+
+
+def _predicted_marks_range(
+    predicted_percentage: float | None, total_marks: int | None
+) -> tuple[float | None, float | None]:
+    """Band the engine's single predicted percentage into a mark range.
+
+    mark-scale.md: the prediction engine returns one percentage; the UI
+    shows a range. +/-3pp is a documented default pending PO confirmation
+    of the band width (see Open Items) — not something the engine decides.
+    """
+    if predicted_percentage is None or total_marks is None:
+        return None, None
+    low_pct = max(0.0, predicted_percentage - PREDICTED_RANGE_MARGIN_PP)
+    high_pct = min(100.0, predicted_percentage + PREDICTED_RANGE_MARGIN_PP)
+    return _percentage_to_marks(low_pct, total_marks), _percentage_to_marks(high_pct, total_marks)
 
 
 def _build_subtopic_stats(
@@ -308,6 +362,13 @@ def build_family_overview(
     insight = select_insight(subject_context)
     recommendation = select_recommendation(insight, subject_context)
 
+    total_marks = get_family_total_marks(db, exam_level, component_family)
+    average_score_marks = _percentage_to_marks(average_percentage, total_marks)
+    recent_score_marks = _percentage_to_marks(recent_percentage, total_marks)
+    predicted_marks_low, predicted_marks_high = _predicted_marks_range(
+        prediction_result.predicted_percentage, total_marks
+    )
+
     return FamilyOverview(
         component_family=component_family,
         exam_level=exam_level,
@@ -323,7 +384,17 @@ def build_family_overview(
         recommendation_rule_id=recommendation.rule_id,
         has_sufficient_data=has_sufficient_data,
         attempts_count=attempts_count,
+        total_marks=total_marks,
+        average_score_marks=average_score_marks,
+        recent_score_marks=recent_score_marks,
+        predicted_marks_low=predicted_marks_low,
+        predicted_marks_high=predicted_marks_high,
     )
 
 
-__all__ = ["MetricSummary", "FamilyOverview", "build_family_overview"]
+__all__ = [
+    "MetricSummary",
+    "FamilyOverview",
+    "build_family_overview",
+    "get_family_total_marks",
+]
