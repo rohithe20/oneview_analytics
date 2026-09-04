@@ -14,8 +14,9 @@ DEMO_STUDENT_USERNAME = "demo_student"
 DEMO_MARKER_PREFIX = "[DEMO]"  # stored in attempt notes for identification
 
 # A subtopic name the demo student is deliberately weak at, so priority
-# and insight have a clear story. Use a real topic name from your seed.
-WEAK_TOPIC_NAME = "Integration"
+# and insight have a clear story. Must be a real subtopic name from the
+# seed (topics.csv) — a child of Integration.
+WEAK_TOPIC_NAME = "Definite & indefinite integration"
 
 random.seed(42)  # reproducible demo data
 

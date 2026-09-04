@@ -1,9 +1,45 @@
-subject_code,name,sort_order
-9709,Quadratics,1
-9709,Functions,2
-9709,Coordinate Geometry,3
-9709,Circular Measure,4
-9709,Trigonometry,5
-9709,Series,6
-9709,Differentiation,7
-9709,Integration,8
+subject_code,name,parent_topic,sort_order
+9709,Quadratics,,1
+9709,Functions,,2
+9709,Coordinate Geometry,,3
+9709,Circular Measure,,4
+9709,Trigonometry,,5
+9709,Series,,6
+9709,Differentiation,,7
+9709,Integration,,8
+9709,Completing the square,Quadratics,1
+9709,Quadratic formula & inequalities,Quadratics,2
+9709,Simultaneous equations,Quadratics,3
+9709,Complex quadratics,Quadratics,4
+9709,Discriminants,Quadratics,5
+9709,Quadratic curves,Quadratics,6
+9709,Composite functions,Functions,1
+9709,Inverse functions & graphs,Functions,2
+9709,Transformations of functions,Functions,3
+9709,Circle equation,Coordinate Geometry,1
+9709,Straight-line equations,Coordinate Geometry,2
+9709,Parallel & perpendicular lines,Coordinate Geometry,3
+9709,Length of line segment and midpoint,Coordinate Geometry,4
+9709,Radian conversion,Circular Measure,1
+9709,Arc length,Circular Measure,2
+9709,Area of sector,Circular Measure,3
+9709,Graphs of trigonometric functions,Trigonometry,1
+9709,Inverse trigonometric functions,Trigonometry,2
+9709,Trigonometric equations & identities,Trigonometry,3
+9709,Binomial expansion & coefficients,Series,1
+9709,Arithmetic & geometric progressions,Series,2
+9709,Derivative & gradient functions,Differentiation,1
+9709,Chain rule,Differentiation,2
+9709,Tangents & normals,Differentiation,3
+9709,Second derivative,Differentiation,4
+9709,Second derivative & stationary points,Differentiation,5
+9709,Increasing & decreasing functions,Differentiation,6
+9709,Stationary points,Differentiation,7
+9709,Rates of change,Differentiation,8
+9709,Integration as reverse of differentiation,Integration,1
+9709,Constant of integration,Integration,2
+9709,Integration of expressions,Integration,3
+9709,Definite & indefinite integration,Integration,4
+9709,Area under a curve & line,Integration,5
+9709,Improper integrals,Integration,6
+9709,Integration with volume,Integration,7

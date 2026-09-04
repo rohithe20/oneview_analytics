@@ -42,8 +42,14 @@ def load_subjects(db: Session) -> dict[str, Subject]:
 
 def load_topics(db: Session, subjects: dict[str, Subject]) -> dict[tuple[str, str], Topic]:
     errors: list[str] = []
+    rows = list(enumerate(read_csv("topics.csv"), start=2))
 
-    for i, row in enumerate(read_csv("topics.csv"), start=2):
+    # Pass 1: top-level topics (blank parent_topic). Subtopics resolve
+    # against these, so they must exist first.
+    top_rows = [(i, row) for i, row in rows if not row["parent_topic"]]
+    sub_rows = [(i, row) for i, row in rows if row["parent_topic"]]
+
+    for i, row in top_rows:
         subject = subjects.get(row["subject_code"])
         if subject is None:
             errors.append(f"topics.csv line {i}: unknown subject_code {row['subject_code']!r}")
@@ -57,6 +63,58 @@ def load_topics(db: Session, subjects: dict[str, Subject]) -> dict[tuple[str, st
                 Topic(
                     subject_id=subject.id,
                     name=row["name"],
+                    parent_id=None,
+                    sort_order=int(row["sort_order"] or 0),
+                )
+            )
+
+    if errors:
+        raise SeedError("\n".join(errors))
+
+    db.flush()
+
+    # Names of rows in this file that are themselves subtopics — used to
+    # give a precise error when a subtopic tries to parent another one.
+    subtopic_names_in_file = {row["name"] for _, row in sub_rows}
+
+    top_level_by_name: dict[tuple[str, str], Topic] = {
+        (t.subject.code, t.name): t
+        for t in db.scalars(select(Topic).where(Topic.parent_id.is_(None))).all()
+    }
+
+    # Pass 2: subtopics, one level of nesting only.
+    for i, row in sub_rows:
+        subject = subjects.get(row["subject_code"])
+        if subject is None:
+            errors.append(f"topics.csv line {i}: unknown subject_code {row['subject_code']!r}")
+            continue
+
+        parent_name = row["parent_topic"]
+
+        if parent_name in subtopic_names_in_file:
+            errors.append(
+                f"topics.csv line {i}: parent_topic {parent_name!r} for subtopic "
+                f"{row['name']!r} is itself a subtopic — only one level of nesting is allowed"
+            )
+            continue
+
+        parent = top_level_by_name.get((subject.code, parent_name))
+        if parent is None:
+            errors.append(
+                f"topics.csv line {i}: unknown parent_topic {parent_name!r} "
+                f"for subtopic {row['name']!r}"
+            )
+            continue
+
+        existing = db.scalar(
+            select(Topic).where(Topic.subject_id == subject.id, Topic.name == row["name"])
+        )
+        if existing is None:
+            db.add(
+                Topic(
+                    subject_id=subject.id,
+                    name=row["name"],
+                    parent_id=parent.id,
                     sort_order=int(row["sort_order"] or 0),
                 )
             )
