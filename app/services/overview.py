@@ -73,17 +73,19 @@ def _fetch_attempts(db: Session, student_id: int, exam_level: str, component_fam
 
 
 def _fetch_topic_attempt_rows(db: Session, student_id: int, exam_level: str, component_family: str):
-    """Per (topic, attempt) marks, oldest -> newest within each topic.
+    """Per (topic, attempt) marks, oldest -> newest within each topic_id.
 
     v_topic_performance only gives topic-level totals; the priority engine
     also needs each topic's per-attempt history to derive the repeated-error
     signal and its own trend, so this queries the underlying tables directly
-    with the same scope filter the views use.
+    with the same scope filter the views use. Grouped by topic_id (the
+    granularity sub_parts actually store — a subtopic where one applies,
+    else a top-level topic, per docs/specs/subtopic-seed.md), not by name.
     """
     rows = db.execute(
         text("""
             SELECT
-                t.name AS topic_name,
+                sp.topic_id AS topic_id,
                 a.completed_at AS completed_at,
                 SUM(r.marks_scored) AS marks_scored,
                 SUM(sp.max_marks) AS marks_available
@@ -91,7 +93,6 @@ def _fetch_topic_attempt_rows(db: Session, student_id: int, exam_level: str, com
             JOIN papers p           ON p.id = a.paper_id
             JOIN sub_part_results r ON r.attempt_id = a.id
             JOIN sub_parts sp       ON sp.id = r.sub_part_id
-            JOIN topics t           ON t.id = sp.topic_id
             WHERE a.status = 'COMPLETED'
               AND a.student_id = :student_id
               AND p.level = :exam_level
@@ -100,8 +101,8 @@ def _fetch_topic_attempt_rows(db: Session, student_id: int, exam_level: str, com
                     WHEN p.component IN (5, 6) THEN 'Statistics'
                     ELSE 'Other'
                   END = :component_family
-            GROUP BY t.name, a.id, a.completed_at
-            ORDER BY t.name, a.completed_at ASC
+            GROUP BY sp.topic_id, a.id, a.completed_at
+            ORDER BY sp.topic_id, a.completed_at ASC
         """),
         {
             "student_id": student_id,
@@ -110,6 +111,28 @@ def _fetch_topic_attempt_rows(db: Session, student_id: int, exam_level: str, com
         },
     ).mappings().all()
     return rows
+
+
+def _fetch_topic_hierarchy(db: Session) -> dict[int, tuple[str, str]]:
+    """topic_id -> (topic_name, subtopic_name).
+
+    Every sub_part points at the most specific topic level available: a
+    subtopic, or a top-level topic when no subtopic applies (see
+    docs/specs/subtopic-seed.md). subtopic_name is always that row's own
+    name; topic_name is its parent's name, or its own name when it has no
+    parent (one level of nesting only, so a parent is always top-level).
+    """
+    rows = db.execute(
+        text("""
+            SELECT t.id AS topic_id, t.name AS subtopic_name, parent.name AS parent_name
+            FROM topics t
+            LEFT JOIN topics parent ON parent.id = t.parent_id
+        """)
+    ).mappings().all()
+    return {
+        row["topic_id"]: (row["parent_name"] or row["subtopic_name"], row["subtopic_name"])
+        for row in rows
+    }
 
 
 def _fetch_target_value(
@@ -146,29 +169,30 @@ def _fetch_available_papers(db: Session, exam_level: str, component_family: str)
 def _build_subtopic_stats(
     topic_perf,
     topic_rows,
+    topic_hierarchy: dict[int, tuple[str, str]],
     family_avg: float | None,
 ) -> tuple[list[SubtopicStats], dict[str, tuple[str, int | None, int | None]]]:
     """Build SubtopicStats per topic plus the trend/error-count context the
     insight engine needs for whichever subtopic priority ranks first.
 
     `topic_perf` (from app.services.analytics.topic_performance, backed by
-    v_topic_performance) supplies subtopic_avg/observation_count. `topic_rows`
+    v_topic_performance) supplies subtopic_avg/observation_count, one row
+    per topic_id (the most specific level a sub_part points at). `topic_rows`
     supplies the per-attempt history that view doesn't carry, needed for the
-    repeated-error signal and this subtopic's own trend.
-
-    topics.parent_id is dormant in V1 (no subtopic rows are seeded — see
-    docs/data-model.md §3), so "subtopic" and "topic" are the same value
-    here. Flagged per CLAUDE.md, not silently assumed.
+    repeated-error signal and this subtopic's own trend. `topic_hierarchy`
+    (topic_id -> (topic_name, subtopic_name), from _fetch_topic_hierarchy)
+    derives the topic from the subtopic's parent per docs/specs/subtopic-seed.md.
     """
-    by_topic: dict[str, list] = {}
+    by_topic: dict[int, list] = {}
     for row in topic_rows:
-        by_topic.setdefault(row["topic_name"], []).append(row)
+        by_topic.setdefault(row["topic_id"], []).append(row)
 
     stats: list[SubtopicStats] = []
     extra: dict[str, tuple[str, int | None, int | None]] = {}
 
     for tp in topic_perf:
-        attempt_rows = by_topic.get(tp.topic_name, [])
+        topic_name, subtopic_name = topic_hierarchy[tp.topic_id]
+        attempt_rows = by_topic.get(tp.topic_id, [])
         percentages = []
         has_error_flags = []
         for r in attempt_rows:
@@ -190,8 +214,8 @@ def _build_subtopic_stats(
 
         stats.append(
             SubtopicStats(
-                topic=tp.topic_name,
-                subtopic=tp.topic_name,
+                topic=topic_name,
+                subtopic=subtopic_name,
                 subtopic_avg=float(tp.percentage) if tp.percentage is not None else 0.0,
                 subject_avg=family_avg if family_avg is not None else 0.0,
                 observation_count=tp.attempts_count,
@@ -200,7 +224,7 @@ def _build_subtopic_stats(
                 recent_error_frequency=recent_error_frequency,
             )
         )
-        extra[tp.topic_name] = (trend_result.status, x if y else None, y if y else None)
+        extra[subtopic_name] = (trend_result.status, x if y else None, y if y else None)
 
     return stats, extra
 
@@ -253,8 +277,9 @@ def build_family_overview(
 
     topic_perf = topic_performance(db, student_id, exam_level, component_family)
     topic_rows = _fetch_topic_attempt_rows(db, student_id, exam_level, component_family)
+    topic_hierarchy = _fetch_topic_hierarchy(db)
     subtopic_stats, subtopic_extra = _build_subtopic_stats(
-        topic_perf, topic_rows, average_percentage
+        topic_perf, topic_rows, topic_hierarchy, average_percentage
     )
 
     priorities = rank_priorities(subtopic_stats)

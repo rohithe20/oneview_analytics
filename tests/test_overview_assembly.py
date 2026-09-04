@@ -13,10 +13,12 @@ Per the spec's test contract, these tests cover:
   4. The assembly layer calls the trend engine rather than reimplementing
      it (trend_status must match classify_trend on the same percentages).
 
-topics.parent_id is dormant in V1 (docs/data-model.md §3 — no subtopic
-rows are seeded), so every seeded topic acts as its own subtopic here;
-"Integration" is used as the deliberately weak one, scored at 0 marks
-every attempt against full marks everywhere else.
+Per docs/specs/subtopic-seed.md, sub_parts point at the most specific
+topic level available — a subtopic where the seed data maps one, else the
+top-level topic. The seeded weak area, "Definite & indefinite integration",
+is a subtopic under Integration; the assembly layer derives the topic
+("Integration") from the subtopic's parent. It's scored at 0 marks every
+attempt against full marks everywhere else.
 """
 
 from __future__ import annotations
@@ -31,7 +33,8 @@ from app.seed.loader import load_papers, load_questions, load_subjects, load_top
 from app.services.overview import build_family_overview
 from app.services.trend import classify_trend
 
-WEAK_TOPIC = "Integration"
+WEAK_TOPIC = "Definite & indefinite integration"
+WEAK_TOPIC_PARENT = "Integration"
 PAPER_REF = "9709_11_MJ_2025"
 
 
@@ -112,15 +115,16 @@ def test_populated_overview_with_sufficient_data(db_session):
     assert overview.metrics.average_percentage == 88.0
     assert overview.metrics.recent_percentage == 88.0
 
-    # Integration is scored 0 every time against full marks elsewhere, so
+    # WEAK_TOPIC is scored 0 every time against full marks elsewhere, so
     # it's the only subtopic with a qualifying gap.
     assert len(overview.priorities) == 1
     assert overview.priorities[0].subtopic == WEAK_TOPIC
+    assert overview.priorities[0].topic == WEAK_TOPIC_PARENT
     assert overview.priorities[0].priority == "High"
 
     assert overview.insight_rule_id == "INS-02"
     assert overview.insight_text == (
-        "You have made errors in Integration in 4 of your last 4 relevant attempts."
+        f"You have made errors in {WEAK_TOPIC} in 4 of your last 4 relevant attempts."
     )
     assert overview.recommendation_rule_id == "REC-02"
 
