@@ -15,11 +15,8 @@ from __future__ import annotations
 from datetime import datetime
 
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 
-from app.core.db import get_db
-from app.main import app
 from app.models import Attempt, Paper, Student, StudyTarget, SubPart, SubPartResult
 from app.models.enums import AttemptStatus
 from app.seed.loader import load_papers, load_questions, load_subjects, load_topics
@@ -30,7 +27,6 @@ from app.services.planning import (
     get_target,
     set_target,
 )
-from app.web.routes.overview import STUDENT_ID
 
 PAPER_REF = "9709_11_MJ_2025"
 AS_PURE_PAPERS = 9  # app/seed/data/papers.csv — the OV-PL-003 ceiling for AS/Pure
@@ -45,15 +41,13 @@ def _seed_reference_data(db):
     return subjects, topics, papers
 
 
-def _make_student(db, student_id: int | None = None) -> Student:
+def _make_student(db) -> Student:
     student = Student(
         username="planning_test_student",
         display_name="Test Student",
         level="AS",
         password_hash="not-a-real-hash",
     )
-    if student_id is not None:
-        student.id = student_id
     db.add(student)
     db.commit()
     return student
@@ -216,22 +210,72 @@ def test_target_of_zero_yields_the_not_set_state_not_a_divide_by_zero(db_session
 
 
 @pytest.fixture
-def client(db_session):
-    """TestClient wired to the test session, with the hardcoded demo student.
+def client(db_session, logged_in_client):
+    """TestClient with the reference data seeded and `auth_student` logged in.
 
-    overview.py pins STUDENT_ID = 1 per overview-ui.md §8, so the route tests
-    need that student to exist at that id.
+    The route takes student_id from the session (login-auth spec), so these
+    tests assert against `auth_student.id` — whatever the database assigned —
+    rather than a hardcoded constant.
     """
     _seed_reference_data(db_session)
-    _make_student(db_session, student_id=STUDENT_ID)
-
-    app.dependency_overrides[get_db] = lambda: db_session
-    with TestClient(app) as test_client:
-        yield test_client
-    app.dependency_overrides.clear()
+    return logged_in_client
 
 
-def test_post_target_persists_and_redirects(client, db_session):
+def test_overview_requires_a_logged_in_student(anonymous_client):
+    """No session, no data: the scope filter has no student to be built from."""
+    response = anonymous_client.get("/overview", follow_redirects=False)
+
+    assert response.status_code == 303
+    assert response.headers["location"] == "/login"
+
+
+def test_post_target_requires_a_logged_in_student(anonymous_client, db_session):
+    _seed_reference_data(db_session)
+
+    response = anonymous_client.post(
+        "/overview/target",
+        data={"level": "AS", "family": "Pure", "target_value": "1"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    assert response.headers["location"] == "/login"
+    # Rejected before the service ran — no target was written for anyone.
+    assert db_session.scalar(select(func.count()).select_from(StudyTarget)) == 0
+
+
+def test_the_route_ignores_a_student_id_in_the_request(client, db_session, auth_student):
+    """A posted student_id must not move the target off the session's student.
+
+    This is the security property in BRD/NFR terms: student_id is never read
+    from the request, so smuggling one in changes nothing.
+    """
+    other = Student(
+        username="someone_else",
+        display_name="Other Student",
+        level="AS",
+        password_hash="not-a-real-hash",
+    )
+    db_session.add(other)
+    db_session.commit()
+
+    response = client.post(
+        "/overview/target",
+        data={
+            "level": "AS",
+            "family": "Pure",
+            "target_value": "1",
+            "student_id": str(other.id),
+        },
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    assert get_target(db_session, auth_student.id, "AS", "Pure").target_value == 1
+    assert get_target(db_session, other.id, "AS", "Pure") is None
+
+
+def test_post_target_persists_and_redirects(client, db_session, auth_student):
     response = client.post(
         "/overview/target",
         data={"level": "AS", "family": "Pure", "target_value": "1"},
@@ -240,11 +284,11 @@ def test_post_target_persists_and_redirects(client, db_session):
 
     assert response.status_code == 303
     assert response.headers["location"] == "/overview?level=AS"
-    assert get_target(db_session, STUDENT_ID, "AS", "Pure").target_value == 1
+    assert get_target(db_session, auth_student.id, "AS", "Pure").target_value == 1
 
 
-def test_post_target_updates_an_existing_target(client, db_session):
-    set_target(db_session, STUDENT_ID, "AS", "Pure", 1)
+def test_post_target_updates_an_existing_target(client, db_session, auth_student):
+    set_target(db_session, auth_student.id, "AS", "Pure", 1)
 
     response = client.post(
         "/overview/target",
@@ -253,10 +297,10 @@ def test_post_target_updates_an_existing_target(client, db_session):
     )
 
     assert response.status_code == 303
-    assert get_target(db_session, STUDENT_ID, "AS", "Pure").target_value == 0
+    assert get_target(db_session, auth_student.id, "AS", "Pure").target_value == 0
 
 
-def test_post_target_above_available_papers_is_rejected(client, db_session):
+def test_post_target_above_available_papers_is_rejected(client, db_session, auth_student):
     response = client.post(
         "/overview/target",
         data={"level": "AS", "family": "Pure", "target_value": "50"},
@@ -265,10 +309,10 @@ def test_post_target_above_available_papers_is_rejected(client, db_session):
 
     assert response.status_code == 400
     assert f"Target must be between 0 and {AS_PURE_PAPERS}" in response.text
-    assert get_target(db_session, STUDENT_ID, "AS", "Pure") is None
+    assert get_target(db_session, auth_student.id, "AS", "Pure") is None
 
 
-def test_post_target_negative_is_rejected(client, db_session):
+def test_post_target_negative_is_rejected(client, db_session, auth_student):
     response = client.post(
         "/overview/target",
         data={"level": "AS", "family": "Pure", "target_value": "-3"},
@@ -276,10 +320,10 @@ def test_post_target_negative_is_rejected(client, db_session):
     )
 
     assert response.status_code == 400
-    assert get_target(db_session, STUDENT_ID, "AS", "Pure") is None
+    assert get_target(db_session, auth_student.id, "AS", "Pure") is None
 
 
-def test_post_target_non_numeric_is_rejected(client, db_session):
+def test_post_target_non_numeric_is_rejected(client, db_session, auth_student):
     response = client.post(
         "/overview/target",
         data={"level": "AS", "family": "Pure", "target_value": "many"},
@@ -287,7 +331,7 @@ def test_post_target_non_numeric_is_rejected(client, db_session):
     )
 
     assert response.status_code == 400
-    assert get_target(db_session, STUDENT_ID, "AS", "Pure") is None
+    assert get_target(db_session, auth_student.id, "AS", "Pure") is None
 
 
 def test_post_target_rejects_an_unknown_scope(client, db_session):
@@ -308,8 +352,8 @@ def test_post_target_rejects_an_unknown_scope(client, db_session):
     assert response.status_code == 404
 
 
-def test_overview_page_renders_the_stored_target(client, db_session):
-    set_target(db_session, STUDENT_ID, "AS", "Pure", 1)
+def test_overview_page_renders_the_stored_target(client, db_session, auth_student):
+    set_target(db_session, auth_student.id, "AS", "Pure", 1)
 
     response = client.get("/overview?level=AS")
 

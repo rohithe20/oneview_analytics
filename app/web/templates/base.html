@@ -8,7 +8,8 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-screen flex bg-slate-100 text-slate-900 overflow-hidden" hx-boost="true">
+<body class="{% block body_class %}h-screen flex bg-slate-100 text-slate-900 overflow-hidden{% endblock %}" hx-boost="true">
+{% block body %}
 
     <aside class="w-60 shrink-0 bg-indigo-950 text-white flex flex-col">
         <div class="px-5 py-6 flex items-center gap-3">
@@ -68,13 +69,19 @@
                 </div>
             </div>
             <div class="mt-4 border-t border-white/10 pt-3">
-                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-indigo-200 hover:bg-white/10 hover:text-white">
-                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                    </svg>
-                    <span>Log out</span>
-                </a>
+                <!-- A form, not a link: /logout is POST so a third-party page
+                     cannot fire it cross-site. hx-boost is off so the browser
+                     follows the 303 to /login itself. -->
+                <form method="post" action="/logout" hx-boost="false">
+                    <button type="submit"
+                            class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-indigo-200 hover:bg-white/10 hover:text-white">
+                        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        </svg>
+                        <span>Log out</span>
+                    </button>
+                </form>
             </div>
         </div>
     </aside>
@@ -113,6 +120,7 @@
             {% block content %}{% endblock %}
         </main>
     </div>
+{% endblock %}
 
 </body>
 </html>
