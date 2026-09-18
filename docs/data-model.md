@@ -206,15 +206,26 @@ machinery — it falls out of the grain.
 
 ## 5. Derived values
 
-Nothing derived is stored. Two SQL views carry it:
+Nothing derived is stored. Three SQL views carry it:
 
 - **`v_attempt_totals`** — marks scored, marks available, percentage, questions
-  attempted, per attempt. Excludes drafts.
+  attempted, per attempt. Excludes drafts. This is the RAW per-attempt view:
+  it keeps every attempt, including superseded ones.
+- **`v_latest_paper_attempts`** — the one attempt that counts for each
+  `(student_id, paper_id)`: the most recent completed one, ties broken on `id`.
+  A paper may be attempted many times (D5), but only the latest feeds analytics
+  (see `docs/specs/planning-performance.md`, "The counted attempt"). This view
+  is the single definition of that rule; readers of `v_attempt_totals` and of
+  the base tables join it to apply the reduction.
 - **`v_topic_performance`** — marks scored, marks available, percentage and
-  `attempts_count`, per student per topic. Excludes drafts.
+  `attempts_count`, per student per topic. Excludes drafts, and is defined on
+  top of `v_latest_paper_attempts`, so every topic aggregate already counts a
+  paper once.
 
 `attempts_count` is what powers BR-05. A topic with fewer than three
-observations is reported as *insufficient data*, never as a weakness.
+observations is reported as *insufficient data*, never as a weakness — and an
+observation is a distinct paper, so re-sitting one paper cannot manufacture
+one.
 
 ---
 

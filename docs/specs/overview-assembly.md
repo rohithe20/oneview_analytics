@@ -21,7 +21,10 @@ needs — so the template renders from one object and contains no logic.
 
 The function:
 1. Fetches scope-filtered attempt percentages (oldest→newest) and topic/
-   subtopic aggregates via the data-access layer / analytics views.
+   subtopic aggregates via the data-access layer / analytics views,
+   reduced to ONE attempt per distinct paper — the most recent (see
+   planning-performance.md, "The counted attempt"). Every read joins
+   `v_latest_paper_attempts`; the layer does not re-derive the rule.
 2. Calls each engine with its required inputs.
 3. Packs the results into `FamilyOverview`.
 
@@ -70,12 +73,13 @@ and hands them over.
 
         # cross-cutting
         has_sufficient_data: bool         # False → panel shows empty/insufficient state
-        attempts_count: int
+        attempts_count: int               # counted attempts = distinct papers
 
 ## Data sufficiency (drives the UI states)
 
-`has_sufficient_data` is True when there are ≥5 completed valid attempts
-in scope (the overall gate from the BRD). The template uses it to choose
+`has_sufficient_data` is True when there are ≥5 COUNTED attempts in scope
+(the overall gate from the BRD) — that is, ≥5 distinct papers, since a
+re-sit supersedes rather than adds. The template uses it to choose
 between the populated view and the insufficient/empty state.
 
 Individual engines ALSO return their own insufficient states (trend needs
@@ -96,10 +100,16 @@ for its component. Never fabricate a value to fill a gap.
 
 ## Test contract (tests/test_overview_assembly.py)
 
-- With a seeded student having ≥5 Pure AS attempts: returns a populated
-  FamilyOverview; predicted_percentage is not None; priorities non-empty
-  if a weak subtopic exists.
-- With <5 attempts: has_sufficient_data is False; no fabricated numbers.
+- With a seeded student having ≥5 counted Pure AS attempts (on ≥5
+  DISTINCT papers): returns a populated FamilyOverview;
+  predicted_percentage is not None; priorities non-empty if a weak
+  subtopic exists.
+- With <5 counted attempts: has_sufficient_data is False; no fabricated
+  numbers. Five attempts at ONE paper is one counted attempt, so it must
+  read as insufficient.
+- A paper attempted twice contributes only its latest result to
+  papers_completed, the averages, trend_points and the priority
+  observation counts.
 - Scope isolation: building for (Pure, AS) never includes Statistics or
   A-level attempts. Seed one attempt in another scope and assert it does
   not affect the result.
@@ -110,6 +120,8 @@ for its component. Never fabricate a value to fill a gap.
 
 - Do not put any classification or calculation logic here that belongs in
   an engine — this layer only orchestrates and packs.
+- Do not read attempts without the `v_latest_paper_attempts` join, and do
+  not re-implement the most-recent-per-paper rule here.
 - Do not read across levels or families.
 - Do not fabricate values for insufficient states.
 - Do not query inside the template — the template gets a finished

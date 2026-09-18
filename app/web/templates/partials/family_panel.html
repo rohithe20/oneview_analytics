@@ -1,123 +1,233 @@
+{% macro metric_card(label, icon_tint, icon_text, icon) %}
+{# Shell for one metric card: tinted icon circle + small-caps label, caller() supplies the value block. #}
+<div class="rounded-xl border border-slate-200 bg-white p-4">
+    <div class="flex items-center gap-2">
+        <span class="h-7 w-7 shrink-0 rounded-full bg-{{ icon_tint }}-50 text-{{ icon_text }}-600 flex items-center justify-center">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="{{ icon }}" />
+            </svg>
+        </span>
+        <p class="text-[9px] font-semibold uppercase tracking-wide text-slate-500 leading-tight whitespace-nowrap">{{ label }}</p>
+    </div>
+    <div class="mt-3">{{ caller() }}</div>
+</div>
+{% endmacro %}
+
 {% macro render_family_panel(panel) %}
 {% set ov = panel.overview %}
-{% set band = ov.predicted_percentage|band %}
+{% set m = ov.metrics %}
+{% set icon_document = "M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" %}
+{% set icon_star = "M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" %}
+{% set icon_trending = "M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" %}
 
 {% if ov.attempts_count == 0 %}
 <div class="flex flex-col items-center justify-center text-center py-16 px-4">
-    <div class="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-        <span class="text-slate-400 text-xl">+</span>
+    <div class="h-12 w-12 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+        <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
     </div>
     <p class="text-sm font-medium text-slate-700 mb-1">No {{ panel.label }} papers recorded yet</p>
     <p class="text-sm text-slate-400 mb-4">Record a paper to begin tracking performance in this area.</p>
-    <a href="/record" class="inline-block px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-medium hover:bg-violet-700">
+    <a href="/record" class="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700">
         Record a Practice Paper
     </a>
 </div>
 {% else %}
 <div class="space-y-4">
 
-    {# --- 4.1 Predicted Performance --- #}
-    <div class="rounded-xl border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500 mb-2">Predicted Performance</p>
-        {% if ov.predicted_percentage is not none %}
-        <div class="flex items-baseline gap-2">
-            <span class="text-3xl font-semibold text-{{ band }}-600">{{ ov.predicted_percentage }}%</span>
-            {% if ov.prediction_confidence == 'limited' %}
-            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-medium">limited confidence</span>
-            {% endif %}
-        </div>
-        {% else %}
-        <p class="text-sm text-slate-400">More data needed</p>
-        {% endif %}
-    </div>
-
     {# --- 4.2 Metric row --- #}
     <div class="grid grid-cols-3 gap-3">
-        <div class="rounded-xl border border-slate-200 p-3">
-            <p class="text-xs text-slate-500 mb-1">Average %</p>
-            {% if ov.metrics.average_percentage is not none %}
-            <p class="text-lg font-semibold text-{{ ov.metrics.average_percentage|band }}-600">{{ ov.metrics.average_percentage }}%</p>
-            {% else %}
-            <p class="text-sm text-slate-400">&mdash;</p>
-            {% endif %}
-        </div>
-        <div class="rounded-xl border border-slate-200 p-3">
-            <p class="text-xs text-slate-500 mb-1">Recent %</p>
-            {% if ov.metrics.recent_percentage is not none %}
-            <p class="text-lg font-semibold text-{{ ov.metrics.recent_percentage|band }}-600">{{ ov.metrics.recent_percentage }}%</p>
-            {% else %}
-            <p class="text-sm text-slate-400">&mdash;</p>
-            {% endif %}
-        </div>
-        <div class="rounded-xl border border-slate-200 p-3">
-            <p class="text-xs text-slate-500 mb-1">Papers Completed</p>
-            {% if ov.metrics.target_value %}
-            <p class="text-lg font-semibold text-slate-900">{{ ov.metrics.papers_completed }}<span class="text-xs text-slate-400 font-normal"> / {{ ov.metrics.target_value }}</span></p>
-            <div class="mt-1.5 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div class="h-full rounded-full bg-violet-500" style="width: {{ [ov.metrics.completion_percentage, 100]|min }}%"></div>
-            </div>
-            {% else %}
-            <p class="text-lg font-semibold text-slate-900">{{ ov.metrics.papers_completed }}</p>
-            <p class="text-xs text-slate-400 mt-1">No target set</p>
-            {% endif %}
-        </div>
-    </div>
 
-    {# --- 4.3 Trend --- #}
-    <div class="rounded-xl border border-slate-200 p-4">
-        <div class="flex items-center justify-between mb-3">
-            <p class="text-xs font-medium text-slate-500">Trend</p>
-            <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ trend_pill_classes[ov.trend_status] }}">
-                {{ ov.trend_status }}
-            </span>
-        </div>
-        <div class="h-32" data-trend-chart data-points="{{ ov.trend_points|tojson }}">
-            <canvas></canvas>
-        </div>
-    </div>
-
-    {# --- 4.4 Priority Areas --- #}
-    <div class="rounded-xl border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500 mb-3">Priority Areas</p>
-        {% if ov.priorities %}
-        <div class="space-y-2">
-            {% for p in ov.priorities %}
-            <a href="/topic-analysis?level={{ ov.exam_level }}&family={{ ov.component_family }}&topic={{ p.topic|urlencode }}"
-               class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-200">
-                <span class="text-sm text-slate-700">
-                    {%- if p.topic == p.subtopic -%}
-                    {{ p.topic }}
-                    {%- else -%}
-                    {{ p.topic }} &rarr; {{ p.subtopic }}
-                    {%- endif -%}
-                </span>
-                <span class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-{{ p.percentage|band }}-600">{{ p.percentage }}%</span>
-                    <span class="px-2 py-0.5 rounded-full text-xs font-medium border {{ priority_classes[p.priority] }}">{{ p.priority }}</span>
-                </span>
-            </a>
-            {% endfor %}
+        {% call metric_card("Papers Completed", "indigo", "indigo", icon_document) %}
+        {% if m.target_value %}
+        <p class="text-2xl font-bold text-slate-900 leading-none">
+            {{ m.papers_completed }}<span class="text-base font-semibold text-slate-400"> / {{ m.target_value }}</span>
+        </p>
+        <p class="mt-1.5 text-xs text-slate-500">{{ m.completion_percentage|pct }} of target</p>
+        <div class="mt-2.5 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+            <div class="h-full rounded-full bg-indigo-600" style="width: {{ [m.completion_percentage, 100]|min }}%"></div>
         </div>
         {% else %}
-        <p class="text-sm text-slate-400">More data needed to identify priority areas.</p>
+        <p class="text-2xl font-bold text-slate-900 leading-none">{{ m.papers_completed }}</p>
+        <p class="mt-1.5 text-xs text-slate-400">No target set</p>
         {% endif %}
+        {% endcall %}
+
+        {% call metric_card("Average Score", "indigo", "indigo", icon_star) %}
+        {% if m.average_percentage is not none %}
+        {% if ov.total_marks %}
+        <p class="text-2xl font-bold text-slate-900 leading-none">
+            {{ ov.average_score_marks|marks }}<span class="text-base font-semibold text-slate-400"> / {{ ov.total_marks }}</span>
+        </p>
+        {% else %}
+        <p class="text-2xl font-bold text-slate-900 leading-none">{{ m.average_percentage|pct }}</p>
+        {% endif %}
+        <p class="mt-1.5 text-xs font-medium text-{{ m.average_percentage|band }}-600">{{ m.average_percentage|pct }}</p>
+        {% else %}
+        <p class="text-2xl font-bold text-slate-300 leading-none">&mdash;</p>
+        <p class="mt-1.5 text-xs text-slate-400">More data needed</p>
+        {% endif %}
+        {% endcall %}
+
+        {% call metric_card("Recent Score", "emerald", "emerald", icon_trending) %}
+        {% if m.recent_percentage is not none %}
+        {% if ov.total_marks %}
+        <p class="text-2xl font-bold text-slate-900 leading-none">
+            {{ ov.recent_score_marks|marks }}<span class="text-base font-semibold text-slate-400"> / {{ ov.total_marks }}</span>
+        </p>
+        {% else %}
+        <p class="text-2xl font-bold text-slate-900 leading-none">{{ m.recent_percentage|pct }}</p>
+        {% endif %}
+        <p class="mt-1.5 text-xs font-medium text-{{ m.recent_percentage|band }}-600">{{ m.recent_percentage|pct }}</p>
+        {# Trend echo, as in the snapshot. Withheld when the engine withholds a
+           classification — the Performance Trend card carries that state. #}
+        {% if ov.trend_status != 'More data needed' %}
+        <p class="mt-1 text-xs font-semibold {{ trend_text_classes[ov.trend_status] }}">
+            {% if ov.trend_status == 'Improving' %}&uarr; {% elif ov.trend_status == 'Needs Focus' %}&darr; {% endif %}{{ ov.trend_status }}
+        </p>
+        {% endif %}
+        {% else %}
+        <p class="text-2xl font-bold text-slate-300 leading-none">&mdash;</p>
+        <p class="mt-1.5 text-xs text-slate-400">More data needed</p>
+        {% endif %}
+        {% endcall %}
+
     </div>
 
-    {# --- 4.5 Insight --- #}
-    {% if ov.insight_text %}
-    <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500 mb-1">Insight</p>
-        <p class="text-sm text-slate-600">{{ ov.insight_text }}</p>
+    {# --- 4.1 Predicted Performance --- #}
+    <div class="rounded-xl border border-slate-200 bg-white p-4">
+        <div class="flex items-start gap-2.5">
+            <span class="h-8 w-8 shrink-0 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="{{ icon_trending }}" />
+                </svg>
+            </span>
+            <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Predicted Performance</p>
+                    {% if ov.prediction_confidence == 'limited' %}
+                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-medium">limited confidence</span>
+                    {% endif %}
+                </div>
+                {% if ov.predicted_percentage is not none %}
+                {% if ov.total_marks %}
+                <p class="mt-2 text-2xl font-bold text-slate-900 leading-none">
+                    {{ ov.predicted_marks_low|marks_nearest }} &ndash; {{ ov.predicted_marks_high|marks_nearest }}<span class="text-base font-semibold text-slate-400"> / {{ ov.total_marks }}</span>
+                </p>
+                <p class="mt-1.5 text-xs font-medium text-{{ ov.predicted_percentage|band }}-600">
+                    {{ (ov.predicted_marks_low / ov.total_marks * 100)|round|int }}% &ndash; {{ (ov.predicted_marks_high / ov.total_marks * 100)|round|int }}%
+                </p>
+                {% else %}
+                <p class="mt-2 text-2xl font-bold text-{{ ov.predicted_percentage|band }}-600 leading-none">{{ ov.predicted_percentage|pct }}</p>
+                {% endif %}
+                {% else %}
+                <p class="mt-2 text-sm text-slate-400">More data needed</p>
+                {% endif %}
+            </div>
+            <span class="ml-auto shrink-0 text-slate-300" title="Predicted from your completed papers in this scope.">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+            </span>
+        </div>
     </div>
-    {% endif %}
 
-    {# --- 4.6 Recommendation --- #}
-    {% if ov.recommendation_text %}
-    <div class="rounded-xl bg-violet-50 border border-violet-100 p-4">
-        <p class="text-xs font-medium text-violet-500 mb-1">Recommendation</p>
-        <p class="text-sm text-violet-900 font-medium">{{ ov.recommendation_text }}</p>
+    <div class="grid grid-cols-2 gap-3 items-stretch">
+
+        {# --- 4.3 Trend --- #}
+        <div class="rounded-xl border border-slate-200 bg-white p-4 flex flex-col">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Performance Trend</p>
+            <div class="mt-3 h-36" data-trend-chart data-points="{{ ov.trend_points|tojson }}">
+                <canvas></canvas>
+            </div>
+            <div class="mt-3">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold {{ trend_pill_classes[ov.trend_status] }}">
+                    {% if ov.trend_status == 'Improving' %}&uarr;{% elif ov.trend_status == 'Needs Focus' %}&darr;{% endif %}
+                    {{ ov.trend_status }}
+                </span>
+            </div>
+        </div>
+
+        {# --- 4.4 Priority Areas --- #}
+        <div class="rounded-xl border border-slate-200 bg-white p-4 flex flex-col">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Priority Improvement Areas</p>
+            {% if ov.priorities %}
+            <div class="mt-3 flex-1 space-y-1">
+                {% for p in ov.priorities %}
+                <a href="/topic-analysis?level={{ ov.exam_level }}&family={{ ov.component_family }}&topic={{ p.topic|urlencode }}"
+                   class="flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-slate-50">
+                    <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold {{ priority_classes[p.priority] }}">
+                        <span class="h-1.5 w-1.5 rounded-full bg-current"></span>{{ p.priority }}
+                    </span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block truncate text-xs font-semibold text-slate-900">{{ p.topic }}</span>
+                        {% if p.subtopic != p.topic %}
+                        <span class="block truncate text-[11px] text-slate-500">{{ p.subtopic }}</span>
+                        {% endif %}
+                    </span>
+                    <span class="shrink-0 text-xs font-semibold text-{{ p.percentage|band }}-600">{{ p.percentage|pct }}</span>
+                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </a>
+                {% endfor %}
+            </div>
+            <a href="/topic-analysis?level={{ ov.exam_level }}&family={{ ov.component_family }}"
+               class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+                View all in Topic Analysis
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13.5 4.5l7.5 7.5-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+            {% else %}
+            <p class="mt-3 flex-1 text-sm text-slate-400">More data needed to identify priority areas.</p>
+            {% endif %}
+        </div>
+
     </div>
-    {% endif %}
+
+    <div class="grid grid-cols-2 gap-3 items-stretch">
+
+        {# --- 4.5 Insight --- #}
+        {% if ov.insight_text %}
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div class="flex items-center gap-2.5">
+                <span class="h-7 w-7 shrink-0 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                    </svg>
+                </span>
+                <p class="text-[10px] font-semibold uppercase tracking-wider text-indigo-700">OneView Insight</p>
+            </div>
+            <p class="mt-2.5 text-xs leading-relaxed text-slate-600">{{ ov.insight_text }}</p>
+        </div>
+        {% endif %}
+
+        {# --- 4.6 Recommendation --- #}
+        {% if ov.recommendation_text %}
+        <div class="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+            <div class="flex items-center gap-2.5">
+                <span class="h-7 w-7 shrink-0 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </span>
+                <p class="text-[10px] font-semibold uppercase tracking-wider text-indigo-700">Recommendation</p>
+            </div>
+            <p class="mt-2.5 text-xs font-medium leading-relaxed text-indigo-900">{{ ov.recommendation_text }}</p>
+        </div>
+        {% endif %}
+
+    </div>
 
 </div>
 {% endif %}

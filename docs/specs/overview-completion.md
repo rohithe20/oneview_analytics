@@ -65,7 +65,7 @@ insight, recommendation), verify all three render correctly:
       for that topic/subtopic (OV-T-019). A stub target route is
       acceptable for now, but the link must be present and carry the
       topic/subtopic context.
-- [ ] D2. Target-setting control (§35): the student can set a practice
+- [x] D2. Target-setting control (§35): the student can set a practice
       target per (level, family). Validated 0 ≤ target ≤ available
       papers (OV-PL-003). Setting it updates Papers Completed / Target
       and the completion bar. Target = 0 shows a not-set state, never a

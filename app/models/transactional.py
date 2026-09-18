@@ -48,6 +48,36 @@ class Attempt(Base):
     )
 
 
+class StudyTarget(Base):
+    """One practice target per (student, exam_level, component_family).
+
+    Not keyed by subject — the subject is always Maths (9709); the
+    independence is per component family (docs/specs/planning-performance.md).
+    Table and constraints already exist in migration 15047ca50390; this maps
+    them, it does not redefine them.
+    """
+
+    __tablename__ = "study_targets"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"))
+    exam_level: Mapped[str] = mapped_column(String(2))
+    component_family: Mapped[str] = mapped_column(String(20))
+    target_value: Mapped[int]
+
+    __table_args__ = (
+        UniqueConstraint(
+            "student_id", "exam_level", "component_family", name="uq_study_targets_scope"
+        ),
+        # Named to match the constraint the migration actually created — the
+        # metadata naming convention prefixes 'ck_study_targets_' to whatever
+        # name it is given, so the DB name is doubled. Do not "tidy" this.
+        CheckConstraint("target_value >= 0", name="ck_study_targets_non_negative"),
+    )
+
+    student: Mapped[Student] = relationship()
+
+
 class SubPartResult(Base):
     __tablename__ = "sub_part_results"
 

@@ -250,6 +250,13 @@ def load_questions(
                         sort_order=order,
                     )
                 )
+            elif existing.topic_id != topic.id:
+                # Re-point a sub-part whose topic_name changed in the CSV.
+                # Inserting only would silently strand an already-seeded DB
+                # on the old mapping — which is how every Integration
+                # sub-part stayed on the top-level topic after subtopics
+                # were added (docs/specs/subtopic-seed.md).
+                existing.topic_id = topic.id
 
     # The checksum: transcribed total must match the sum of the parts.
     for paper_ref, total in totals.items():

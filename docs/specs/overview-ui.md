@@ -37,20 +37,45 @@ Topic Analysis all extend it. Do NOT create a second nav or header.
 
 ## 2. Palette and visual treatment
 
-Approved OneView direction — purple/blue primary. Use these Tailwind
-tokens consistently:
+**Binding target: the BRD Overview prototype snapshot.** Match it. The
+direction is a DEEP INDIGO/BLUE primary with a dark navy sidebar — NOT
+the earlier violet. Approximate Tailwind tokens (attach the snapshot to
+the build prompt and match it visually; these are the closest tokens,
+adjust to the image):
 
-| Role | Tailwind | Use |
+| Role | Tailwind (closest) | Use |
 |---|---|---|
-| Primary accent | `violet-600` / `purple-600` | active nav, primary buttons, headings accent |
-| Primary hover | `violet-700` | button hover |
-| Surface | `white` on `slate-50` page bg | cards |
+| Sidebar background | `indigo-950` / `#1e1b4b`-ish deep navy | the whole left sidebar |
+| Sidebar text | `white` / `indigo-100` | nav labels, wordmark |
+| Sidebar active item | lighter `indigo-700`/`indigo-600` block | highlights the current page |
+| Primary accent | `indigo-600` (`#4f46e5`-ish) | family headers, primary buttons, links, chart line |
+| Primary hover | `indigo-700` | button hover |
+| Page background | `slate-50` | behind the cards |
+| Surface | `white` | cards |
 | Card border | `slate-200` | 1px borders, `rounded-xl` |
 | Text primary | `slate-900` | headings, values |
 | Text muted | `slate-500` | labels, sub-text |
+| Icon tint circles | soft `indigo-50`/`emerald-50`/`amber-50` | the tinted circle behind each metric-card icon |
 | Strong (good) | `emerald-500` | ≥75% performance |
 | Moderate | `amber-500` | 50–74% |
 | Weak | `rose-500` | <50% |
+
+Visual specifics from the snapshot to reproduce:
+- **Sidebar** is dark navy, full height, with the ONEVIEW wordmark +
+  small logo at top, icon+label nav items, the active item in a lighter
+  indigo block, and the student block (avatar circle, name, "AS Level
+  Student", log out) pinned at the bottom.
+- **Family panel header**: an icon in a rounded-square tile (fx for
+  Pure, bar-chart for Statistics) + the family name in indigo, uppercase,
+  bold; an "Edit Target" button top-right; "Practice Target: N papers"
+  and "Available Papers: N" as a sub-row.
+- **Metric cards**: white, rounded, subtle border, a soft-tinted icon
+  circle top-left, the metric label in small caps muted, the value large
+  (mark primary e.g. "58.4 / 75"), the percentage and any "↑ Improving"
+  below.
+- **Header bar**: student name large on the left, "Exam Level: [AS][A]"
+  segmented toggle, a "Last updated" timestamp, and a "+ Record Practice
+  Paper" primary button on the right.
 
 - Cards: white, `rounded-xl`, `border border-slate-200`, `p-5`, subtle
   shadow (`shadow-sm`). Generous whitespace — the BRD says clear, not
