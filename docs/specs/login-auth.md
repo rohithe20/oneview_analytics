@@ -19,9 +19,10 @@ never trust a student_id from the URL.
 
 Use a maintained approach. Two acceptable options — pick one, flag it:
 
-1. **Starlette/FastAPI session middleware + passlib** — session cookie
-   signed with SECRET_KEY, password hashing via passlib (bcrypt). Minimal
-   dependencies, easy to review. RECOMMENDED for this project's size.
+1. **Starlette/FastAPI session middleware + the bcrypt library
+   directly** — session cookie signed with SECRET_KEY, password hashing
+   via `bcrypt` (no passlib wrapper). Minimal dependencies, easy to
+   review. RECOMMENDED for this project's size.
 2. **fastapi-users** — more batteries, more surface area. Only if the
    extra features are wanted.
 
@@ -66,10 +67,49 @@ because student_id is never taken from the request — only the session.
 
 ## Password hashing
 
-    from passlib.context import CryptContext
-    pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    pwd.hash(password)              # at seed/setup
-    pwd.verify(password, stored)    # at login
+Implemented in `app/core/security.py`; tests in `tests/test_security.py`.
+
+    import bcrypt
+    bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+
+### Why not passlib (decided, do not revisit)
+
+An earlier draft of this spec recommended passlib's `CryptContext`. It
+was dropped:
+
+- passlib's last release was 2020. It is unmaintained.
+- It does not work with current bcrypt: bcrypt 5.0 turned the >72-byte
+  truncation into a hard `ValueError`, which fires inside passlib's own
+  backend self-test, so every `hash()` call raises. Making passlib work
+  requires pinning `bcrypt<5` — needing a version pin to function at all
+  is the signal to avoid the library.
+- It logs `(trapped) error reading bcrypt version` once per process on
+  any bcrypt >= 4.1, because passlib reads a `__about__` attribute that
+  no longer exists. Calling bcrypt directly removes that noise.
+
+Calling bcrypt directly is also simply less code than the wrapper around
+it: two one-line functions.
+
+### Two decisions baked into security.py (do not re-litigate)
+
+**1. Passwords over 72 bytes are REJECTED, not truncated.** bcrypt
+hashes at most 72 bytes of input. `hash_password` raises `ValueError`
+above that rather than letting the tail be dropped, because silent
+truncation makes any two passwords sharing a 72-byte prefix
+interchangeable at login — a real auth bypass, not a cosmetic limit.
+`verify_password` returns `False` for an over-long input so a login
+attempt fails as an ordinary mismatch instead of raising. (SHA-256
+pre-hashing would lift the limit entirely; rejected for MVP as extra
+pipeline for no demo benefit. Nothing stores a real hash yet, so this
+can change later without a migration.)
+
+**2. `verify_password` returns False on a malformed stored hash.**
+`bcrypt.checkpw` raises `ValueError: Invalid salt` against the seeded
+`"not-a-real-hash"` placeholders. Without this, a login attempt by any
+student whose hash has not been set with `python -m app.seed.set_password`
+would 500 instead of failing cleanly. Anonymous input must never be able
+to raise out of the login path.
 
 Never store or log plaintext passwords. SECRET_KEY (already in .env)
 signs the session cookie — for deploy it must be a real generated value,
