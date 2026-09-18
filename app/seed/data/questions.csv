@@ -1,23 +1,208 @@
 paper_ref,question_number,sub_part_label,max_marks,topic_name
-9709_11_MJ_2025,1,,4,Trigonometry
-9709_11_MJ_2025,2,a,2,Differentiation
-9709_11_MJ_2025,2,b,4,Definite & indefinite integration
-9709_11_MJ_2025,3,a,5,Series
-9709_11_MJ_2025,3,b,2,Series
-9709_11_MJ_2025,4,,5,Definite & indefinite integration
-9709_11_MJ_2025,5,a(i),2,Series
-9709_11_MJ_2025,5,a(ii),2,Series
-9709_11_MJ_2025,5,b,3,Series
-9709_11_MJ_2025,6,a,4,Quadratics
-9709_11_MJ_2025,6,b,5,Quadratics
-9709_11_MJ_2025,7,a,4,Differentiation
-9709_11_MJ_2025,7,b,5,Differentiation
-9709_11_MJ_2025,8,,8,Coordinate Geometry
-9709_11_MJ_2025,9,a,4,Circular Measure
-9709_11_MJ_2025,9,b,4,Circular Measure
-9709_11_MJ_2025,10,a,5,Functions
-9709_11_MJ_2025,10,b,2,Functions
-9709_11_MJ_2025,10,c,2,Functions
-9709_11_MJ_2025,10,d,1,Functions
-9709_11_MJ_2025,10,e,1,Functions
-9709_11_MJ_2025,10,f,1,Functions
+9709_11_MJ_2025,1,,4,Trigonometric equations & identities
+9709_11_MJ_2025,2,a,2,Tangents & normals
+9709_11_MJ_2025,2,b,4,Integration as reverse of differentiation
+9709_11_MJ_2025,3,a,5,Arithmetic & geometric progressions
+9709_11_MJ_2025,3,b,2,Arithmetic & geometric progressions
+9709_11_MJ_2025,4,,5,Area under a curve & line
+9709_11_MJ_2025,5,a(i),2,Binomial expansion & coefficients
+9709_11_MJ_2025,5,a(ii),2,Binomial expansion & coefficients
+9709_11_MJ_2025,5,b,3,Binomial expansion & coefficients
+9709_11_MJ_2025,6,a,4,Simultaneous equations
+9709_11_MJ_2025,6,b,5,Discriminants
+9709_11_MJ_2025,7,a,4,Rates of change
+9709_11_MJ_2025,7,b,5,Stationary points
+9709_11_MJ_2025,8,,8,Circle equation
+9709_11_MJ_2025,9,a,4,Area of sector
+9709_11_MJ_2025,9,b,4,Area of sector
+9709_11_MJ_2025,10,a,5,Transformations of functions
+9709_11_MJ_2025,10,b,2,Inverse functions & graphs
+9709_11_MJ_2025,10,c,2,Inverse functions & graphs
+9709_11_MJ_2025,10,d,1,Inverse functions & graphs
+9709_11_MJ_2025,10,e,1,Composite functions
+9709_11_MJ_2025,10,f,1,Composite functions
+9709_12_MJ_2025,1,,4,Transformations of functions
+9709_12_MJ_2025,2,,4,Simultaneous equations
+9709_12_MJ_2025,3,,4,Binomial expansion & coefficients
+9709_12_MJ_2025,4,a,3,Rates of change
+9709_12_MJ_2025,4,b,2,Stationary points
+9709_12_MJ_2025,5,a,2,Graphs of trigonometric functions
+9709_12_MJ_2025,5,b,2,Graphs of trigonometric functions
+9709_12_MJ_2025,5,c,1,Trigonometric equations & identities
+9709_12_MJ_2025,6,,6,Area under a curve & line
+9709_12_MJ_2025,7,a,3,Trigonometric equations & identities
+9709_12_MJ_2025,7,b,4,Trigonometric equations & identities
+9709_12_MJ_2025,8,a,3,Circle equation
+9709_12_MJ_2025,8,b,2,Radian conversion
+9709_12_MJ_2025,8,c,4,Area of sector
+9709_12_MJ_2025,9,a,3,Derivative & gradient functions
+9709_12_MJ_2025,9,b,2,Second derivative & stationary points
+9709_12_MJ_2025,9,c,3,Integration as reverse of differentiation
+9709_12_MJ_2025,9,d,4,Tangents & normals
+9709_12_MJ_2025,10,a(i),2,Arithmetic & geometric progressions
+9709_12_MJ_2025,10,a(ii),3,Arithmetic & geometric progressions
+9709_12_MJ_2025,10,b,5,Arithmetic & geometric progressions
+9709_12_MJ_2025,11,a,2,Completing the square
+9709_12_MJ_2025,11,b(i),3,Inverse functions & graphs
+9709_12_MJ_2025,11,b(ii),4,Inverse functions & graphs
+9709_13_MJ_2025,1,,4,Tangents & normals
+9709_13_MJ_2025,2,,4,Arithmetic & geometric progressions
+9709_13_MJ_2025,3,,4,Definite & indefinite integration
+9709_13_MJ_2025,4,a,3,Binomial expansion & coefficients
+9709_13_MJ_2025,4,b,3,Binomial expansion & coefficients
+9709_13_MJ_2025,5,,6,Trigonometric equations & identities
+9709_13_MJ_2025,6,,6,Arithmetic & geometric progressions
+9709_13_MJ_2025,7,a,3,Increasing & decreasing functions
+9709_13_MJ_2025,7,b,4,Integration as reverse of differentiation
+9709_13_MJ_2025,8,a,2,Radian conversion
+9709_13_MJ_2025,8,b,3,Arc length
+9709_13_MJ_2025,8,c,3,Area of sector
+9709_13_MJ_2025,9,a,4,Parallel & perpendicular lines
+9709_13_MJ_2025,9,b,5,Circle equation
+9709_13_MJ_2025,10,a,4,Stationary points
+9709_13_MJ_2025,10,b,3,Second derivative & stationary points
+9709_13_MJ_2025,10,c(i),1,Transformations of functions
+9709_13_MJ_2025,10,c(ii),3,Transformations of functions
+9709_13_MJ_2025,11,a,4,Inverse functions & graphs
+9709_13_MJ_2025,11,b,6,Composite functions
+9709_15_MJ_2025,1,,4,Integration as reverse of differentiation
+9709_15_MJ_2025,2,,5,Binomial expansion & coefficients
+9709_15_MJ_2025,3,a,2,Completing the square
+9709_15_MJ_2025,3,b,3,Trigonometric equations & identities
+9709_15_MJ_2025,4,,5,Integration with volume
+9709_15_MJ_2025,5,a,4,Arc length
+9709_15_MJ_2025,5,b,2,Area of sector
+9709_15_MJ_2025,6,a,3,Arithmetic & geometric progressions
+9709_15_MJ_2025,6,b,5,Arithmetic & geometric progressions
+9709_15_MJ_2025,7,a,2,Straight-line equations
+9709_15_MJ_2025,7,b,2,Length of line segment and midpoint
+9709_15_MJ_2025,7,c,5,Parallel & perpendicular lines
+9709_15_MJ_2025,8,a,5,Stationary points
+9709_15_MJ_2025,8,b,3,Stationary points
+9709_15_MJ_2025,8,c,3,Rates of change
+9709_15_MJ_2025,9,a,4,Transformations of functions
+9709_15_MJ_2025,9,b,4,Graphs of trigonometric functions
+9709_15_MJ_2025,9,c,4,Inverse functions & graphs
+9709_15_MJ_2025,9,d,1,Composite functions
+9709_15_MJ_2025,10,a,4,Circle equation
+9709_15_MJ_2025,10,b,5,Discriminants
+9709_11_ON_2025,1,,4,Discriminants
+9709_11_ON_2025,2,a,3,Arithmetic & geometric progressions
+9709_11_ON_2025,2,b,2,Arithmetic & geometric progressions
+9709_11_ON_2025,3,,5,Binomial expansion & coefficients
+9709_11_ON_2025,4,a,3,Completing the square
+9709_11_ON_2025,4,b,3,Transformations of functions
+9709_11_ON_2025,5,a,3,Trigonometric equations & identities
+9709_11_ON_2025,5,b,4,Trigonometric equations & identities
+9709_11_ON_2025,6,a,1,Inverse functions & graphs
+9709_11_ON_2025,6,b,2,Inverse functions & graphs
+9709_11_ON_2025,6,c,4,Composite functions
+9709_11_ON_2025,7,a,2,Area of sector
+9709_11_ON_2025,7,b(i),3,Rates of change
+9709_11_ON_2025,7,b(ii),3,Rates of change
+9709_11_ON_2025,8,a,3,Area under a curve & line
+9709_11_ON_2025,8,b,4,Integration with volume
+9709_11_ON_2025,9,a,4,Arithmetic & geometric progressions
+9709_11_ON_2025,9,b,4,Arithmetic & geometric progressions
+9709_11_ON_2025,10,a,4,Circle equation
+9709_11_ON_2025,10,b,3,Circle equation
+9709_11_ON_2025,11,a,3,Tangents & normals
+9709_11_ON_2025,11,b,3,Rates of change
+9709_11_ON_2025,11,c,5,Integration as reverse of differentiation
+9709_12_ON_2025,1,a,2,Completing the square
+9709_12_ON_2025,1,b,1,Discriminants
+9709_12_ON_2025,1,c,2,Quadratic formula & inequalities
+9709_12_ON_2025,2,,3,Binomial expansion & coefficients
+9709_12_ON_2025,3,a,3,Transformations of functions
+9709_12_ON_2025,3,b,2,Transformations of functions
+9709_12_ON_2025,4,a,1,Derivative & gradient functions
+9709_12_ON_2025,4,b,5,Integration as reverse of differentiation
+9709_12_ON_2025,5,a,3,Stationary points
+9709_12_ON_2025,5,b,5,Area under a curve & line
+9709_12_ON_2025,6,a,2,Graphs of trigonometric functions
+9709_12_ON_2025,6,b(i),1,Trigonometric equations & identities
+9709_12_ON_2025,6,b(ii),1,Trigonometric equations & identities
+9709_12_ON_2025,6,c,5,Trigonometric equations & identities
+9709_12_ON_2025,7,a,4,Circle equation
+9709_12_ON_2025,7,b,3,Parallel & perpendicular lines
+9709_12_ON_2025,7,c,4,Parallel & perpendicular lines
+9709_12_ON_2025,8,a,3,Arithmetic & geometric progressions
+9709_12_ON_2025,8,b(i),5,Arithmetic & geometric progressions
+9709_12_ON_2025,8,b(ii),3,Arithmetic & geometric progressions
+9709_12_ON_2025,9,a,4,Inverse functions & graphs
+9709_12_ON_2025,9,b,1,Inverse functions & graphs
+9709_12_ON_2025,9,c,1,Inverse functions & graphs
+9709_12_ON_2025,9,d,2,Composite functions
+9709_12_ON_2025,10,a,2,Arc length
+9709_12_ON_2025,10,b,7,Area of sector
+9709_13_ON_2025,1,a,3,Binomial expansion & coefficients
+9709_13_ON_2025,1,b,2,Binomial expansion & coefficients
+9709_13_ON_2025,2,a,2,Trigonometric equations & identities
+9709_13_ON_2025,2,b,4,Trigonometric equations & identities
+9709_13_ON_2025,3,a,1,Derivative & gradient functions
+9709_13_ON_2025,3,b,1,Length of line segment and midpoint
+9709_13_ON_2025,3,c,1,Derivative & gradient functions
+9709_13_ON_2025,4,a,2,Arithmetic & geometric progressions
+9709_13_ON_2025,4,b,4,Arithmetic & geometric progressions
+9709_13_ON_2025,5,a,2,Radian conversion
+9709_13_ON_2025,5,b,3,Area of sector
+9709_13_ON_2025,6,a,5,Transformations of functions
+9709_13_ON_2025,6,b,3,Transformations of functions
+9709_13_ON_2025,7,,4,Inverse functions & graphs
+9709_13_ON_2025,8,a,3,Circle equation
+9709_13_ON_2025,8,b,5,Parallel & perpendicular lines
+9709_13_ON_2025,9,,8,Integration with volume
+9709_13_ON_2025,10,a(i),3,Completing the square
+9709_13_ON_2025,10,a(ii),1,Inverse functions & graphs
+9709_13_ON_2025,10,b,5,Quadratic formula & inequalities
+9709_13_ON_2025,11,a,6,Tangents & normals
+9709_13_ON_2025,11,b(i),3,Stationary points
+9709_13_ON_2025,11,b(ii),4,Second derivative & stationary points
+9709_15_ON_2025,1,a,2,Circle equation
+9709_15_ON_2025,1,b,3,Circle equation
+9709_15_ON_2025,2,a,3,Arithmetic & geometric progressions
+9709_15_ON_2025,2,b,2,Arithmetic & geometric progressions
+9709_15_ON_2025,3,a,2,Completing the square
+9709_15_ON_2025,3,b,1,Discriminants
+9709_15_ON_2025,4,a,2,Arc length
+9709_15_ON_2025,4,b,5,Area of sector
+9709_15_ON_2025,5,,3,Quadratic formula & inequalities
+9709_15_ON_2025,6,a,3,Trigonometric equations & identities
+9709_15_ON_2025,6,b,4,Trigonometric equations & identities
+9709_15_ON_2025,7,a,3,Derivative & gradient functions
+9709_15_ON_2025,7,b,3,Stationary points
+9709_15_ON_2025,7,c,2,Stationary points
+9709_15_ON_2025,8,a,4,Area under a curve & line
+9709_15_ON_2025,8,b,3,Quadratic formula & inequalities
+9709_15_ON_2025,9,a,3,Binomial expansion & coefficients
+9709_15_ON_2025,9,b,4,Binomial expansion & coefficients
+9709_15_ON_2025,10,a,2,Inverse functions & graphs
+9709_15_ON_2025,10,b,4,Inverse functions & graphs
+9709_15_ON_2025,10,c,3,Composite functions
+9709_15_ON_2025,11,a,5,Tangents & normals
+9709_15_ON_2025,11,b,6,Area under a curve & line
+9709_15_ON_2025,11,c(i),1,Transformations of functions
+9709_15_ON_2025,11,c(ii),2,Transformations of functions
+9709_12_FM_2025,1,,4,Discriminants
+9709_12_FM_2025,2,a,2,Derivative & gradient functions
+9709_12_FM_2025,2,b,3,Stationary points
+9709_12_FM_2025,3,a,4,Binomial expansion & coefficients
+9709_12_FM_2025,3,b,2,Binomial expansion & coefficients
+9709_12_FM_2025,4,a,3,Arc length
+9709_12_FM_2025,4,b,3,Area of sector
+9709_12_FM_2025,5,,6,Arithmetic & geometric progressions
+9709_12_FM_2025,6,a,1,Circle equation
+9709_12_FM_2025,6,b,3,Circle equation
+9709_12_FM_2025,6,c,2,Parallel & perpendicular lines
+9709_12_FM_2025,7,a,3,Trigonometric equations & identities
+9709_12_FM_2025,7,b,4,Trigonometric equations & identities
+9709_12_FM_2025,8,a,4,Arithmetic & geometric progressions
+9709_12_FM_2025,8,b,3,Arithmetic & geometric progressions
+9709_12_FM_2025,9,a,2,Second derivative & stationary points
+9709_12_FM_2025,9,b,7,Integration as reverse of differentiation
+9709_12_FM_2025,10,a,4,Area under a curve & line
+9709_12_FM_2025,10,b,5,Area under a curve & line
+9709_12_FM_2025,11,a,4,Composite functions
+9709_12_FM_2025,11,b,3,Transformations of functions
+9709_12_FM_2025,11,c,3,Transformations of functions
+

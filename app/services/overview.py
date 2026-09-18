@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.services.analytics import topic_performance
 from app.services.insight import SubjectContext, select_insight
+from app.services.planning import get_available_papers, get_target
 from app.services.prediction import AttemptPercentage, PredictionConfig, predict_performance
 from app.services.priority import SubtopicStats, rank_priorities
 from app.services.recommendation import select_recommendation
@@ -15,6 +16,14 @@ from app.services.trend import classify_trend
 MIN_ATTEMPTS_FOR_SUFFICIENT_DATA = 5  # family-level gate, overview-assembly.md
 RECENT_ERROR_WINDOW = 4  # priority-engine.md repeated-error footnote
 PREDICTED_RANGE_MARGIN_PP = 3.0  # mark-scale.md Open Items: width unconfirmed by PO
+
+# planning-performance.md, PO decision 2026-09-05: for each DISTINCT paper only
+# the MOST RECENT completed attempt counts, for every metric — Papers Completed,
+# averages, recent score, trend, prediction and priority alike. The rule itself
+# lives in exactly one place, the v_latest_paper_attempts view (migration
+# 7f3c9d2b41ae); every read below joins that view, and v_topic_performance is
+# defined on top of it, so the engines inherit the reduction rather than each
+# re-deriving it. A paper attempted twice contributes one observation.
 
 
 @dataclass
@@ -49,6 +58,8 @@ class FamilyOverview:
     recommendation_rule_id: str
 
     has_sufficient_data: bool
+    # Counted attempts: the most recent attempt at each distinct paper, so this
+    # equals papers_completed. Re-sits do not inflate it or the sufficiency gate.
     attempts_count: int
 
     # mark-scale.md — same percentages, expressed against the family's paper total
@@ -59,17 +70,23 @@ class FamilyOverview:
     predicted_marks_high: float | None
 
 
-def _fetch_attempts(db: Session, student_id: int, exam_level: str, component_family: str):
-    """Scope-filtered completed attempts, oldest -> newest, from v_attempt_totals."""
+def _fetch_counted_attempts(db: Session, student_id: int, exam_level: str, component_family: str):
+    """The attempts that count in this scope, oldest -> newest — one per paper.
+
+    v_attempt_totals carries every completed attempt; joining
+    v_latest_paper_attempts keeps only the most recent one per distinct
+    paper, which is the series every metric and engine is computed over.
+    """
     rows = db.execute(
         text("""
-            SELECT percentage, completed_at
-            FROM v_attempt_totals
-            WHERE student_id = :student_id
-              AND exam_level = :exam_level
-              AND component_family = :component_family
-              AND percentage IS NOT NULL
-            ORDER BY completed_at ASC
+            SELECT t.paper_id, t.percentage, t.completed_at
+            FROM v_attempt_totals t
+            JOIN v_latest_paper_attempts la ON la.attempt_id = t.attempt_id
+            WHERE t.student_id = :student_id
+              AND t.exam_level = :exam_level
+              AND t.component_family = :component_family
+              AND t.percentage IS NOT NULL
+            ORDER BY t.completed_at ASC
         """),
         {
             "student_id": student_id,
@@ -89,15 +106,21 @@ def _fetch_topic_attempt_rows(db: Session, student_id: int, exam_level: str, com
     with the same scope filter the views use. Grouped by topic_id (the
     granularity sub_parts actually store — a subtopic where one applies,
     else a top-level topic, per docs/specs/subtopic-seed.md), not by name.
+
+    Reduced to one attempt per distinct paper via v_latest_paper_attempts, so
+    the repeated-error window counts distinct papers rather than re-sits of
+    the same one.
     """
-    rows = db.execute(
-        text("""
+    rows = (
+        db.execute(
+            text("""
             SELECT
                 sp.topic_id AS topic_id,
                 a.completed_at AS completed_at,
                 SUM(r.marks_scored) AS marks_scored,
                 SUM(sp.max_marks) AS marks_available
             FROM attempts a
+            JOIN v_latest_paper_attempts la ON la.attempt_id = a.id
             JOIN papers p           ON p.id = a.paper_id
             JOIN sub_part_results r ON r.attempt_id = a.id
             JOIN sub_parts sp       ON sp.id = r.sub_part_id
@@ -112,12 +135,15 @@ def _fetch_topic_attempt_rows(db: Session, student_id: int, exam_level: str, com
             GROUP BY sp.topic_id, a.id, a.completed_at
             ORDER BY sp.topic_id, a.completed_at ASC
         """),
-        {
-            "student_id": student_id,
-            "exam_level": exam_level,
-            "component_family": component_family,
-        },
-    ).mappings().all()
+            {
+                "student_id": student_id,
+                "exam_level": exam_level,
+                "component_family": component_family,
+            },
+        )
+        .mappings()
+        .all()
+    )
     return rows
 
 
@@ -130,48 +156,21 @@ def _fetch_topic_hierarchy(db: Session) -> dict[int, tuple[str, str]]:
     name; topic_name is its parent's name, or its own name when it has no
     parent (one level of nesting only, so a parent is always top-level).
     """
-    rows = db.execute(
-        text("""
+    rows = (
+        db.execute(
+            text("""
             SELECT t.id AS topic_id, t.name AS subtopic_name, parent.name AS parent_name
             FROM topics t
             LEFT JOIN topics parent ON parent.id = t.parent_id
         """)
-    ).mappings().all()
+        )
+        .mappings()
+        .all()
+    )
     return {
         row["topic_id"]: (row["parent_name"] or row["subtopic_name"], row["subtopic_name"])
         for row in rows
     }
-
-
-def _fetch_target_value(
-    db: Session, student_id: int, exam_level: str, component_family: str
-) -> int | None:
-    row = db.execute(
-        text("""
-            SELECT target_value FROM study_targets
-            WHERE student_id = :student_id
-              AND exam_level = :exam_level
-              AND component_family = :component_family
-        """),
-        {
-            "student_id": student_id,
-            "exam_level": exam_level,
-            "component_family": component_family,
-        },
-    ).first()
-    return row[0] if row else None
-
-
-def _fetch_available_papers(db: Session, exam_level: str, component_family: str) -> int:
-    return db.execute(
-        text("""
-            SELECT COUNT(*)
-            FROM papers p
-            JOIN component_families cf ON cf.component = p.component
-            WHERE p.level = :exam_level AND cf.family = :component_family
-        """),
-        {"exam_level": exam_level, "component_family": component_family},
-    ).scalar_one()
 
 
 def get_family_total_marks(db: Session, exam_level: str, component_family: str) -> int | None:
@@ -289,26 +288,38 @@ def build_family_overview(
     exam_level: str,
     component_family: str,
 ) -> FamilyOverview:
-    attempt_rows = _fetch_attempts(db, student_id, exam_level, component_family)
+    # One row per distinct paper already — the newest attempt at each (see the
+    # module note on the reduction). Everything below therefore measures papers,
+    # not re-sits: attempts_count, the >=5 sufficiency gate, the averages, the
+    # trend series and the prediction inputs all count each paper once.
+    attempt_rows = _fetch_counted_attempts(db, student_id, exam_level, component_family)
     percentages = [float(r.percentage) for r in attempt_rows]
     saved_ats = [r.completed_at for r in attempt_rows]
 
     attempts_count = len(percentages)
     has_sufficient_data = attempts_count >= MIN_ATTEMPTS_FOR_SUFFICIENT_DATA
 
+    # Distinct by construction; counted from paper_id rather than assumed, so
+    # Papers Completed stays right even if the reduction is ever relaxed.
+    papers_completed = len({r.paper_id for r in attempt_rows})
+
     average_percentage = round(sum(percentages) / attempts_count, 2) if attempts_count else None
     recent_percentage = percentages[-1] if percentages else None
 
-    target_value = _fetch_target_value(db, student_id, exam_level, component_family)
+    # planning.py owns study_targets; this layer only reads the stored value.
+    # A target of 0 is the not-set state, so it never reaches the division
+    # below (OV-PL-006 — never divide by zero).
+    target = get_target(db, student_id, exam_level, component_family)
+    target_value = target.target_value if target else None
     completion_percentage = (
-        round(100.0 * attempts_count / target_value, 2) if target_value else None
+        round(100.0 * papers_completed / target_value, 2) if target_value else None
     )
-    available_papers = _fetch_available_papers(db, exam_level, component_family)
+    available_papers = get_available_papers(db, exam_level, component_family)
 
     metrics = MetricSummary(
         average_percentage=average_percentage,
         recent_percentage=recent_percentage,
-        papers_completed=attempts_count,
+        papers_completed=papers_completed,
         target_value=target_value,
         completion_percentage=completion_percentage,
         available_papers=available_papers,

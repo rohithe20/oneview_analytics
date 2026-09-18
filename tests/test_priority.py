@@ -10,6 +10,7 @@ subject. The subject is always Maths. Keep the field name or rename to
 `family_avg` consistently across the module and these tests — but do it
 in one deliberate change, not piecemeal.
 """
+
 from __future__ import annotations
 
 from app.services.priority import SubtopicStats, rank_priorities
@@ -39,6 +40,7 @@ def _stat(
 
 # --- Stage 1: classification (OV-T-012 .. OV-T-015) ---
 
+
 def test_gap_16_is_high():
     # gap = 70 - 54 = 16
     out = rank_priorities([_stat(subtopic_avg=54, subject_avg=70)])
@@ -46,16 +48,12 @@ def test_gap_16_is_high():
 
 
 def test_gap_10_with_repeated_errors_is_high():
-    out = rank_priorities(
-        [_stat(subtopic_avg=60, subject_avg=70, repeated_error_signal=True)]
-    )
+    out = rank_priorities([_stat(subtopic_avg=60, subject_avg=70, repeated_error_signal=True)])
     assert out[0].priority == "High"
 
 
 def test_gap_10_without_repeated_errors_is_medium():
-    out = rank_priorities(
-        [_stat(subtopic_avg=60, subject_avg=70, repeated_error_signal=False)]
-    )
+    out = rank_priorities([_stat(subtopic_avg=60, subject_avg=70, repeated_error_signal=False)])
     assert out[0].priority == "Medium"
 
 
@@ -77,9 +75,10 @@ def test_small_gap_is_monitor():
 
 # --- Stage 2: ranking and tie-breaks (OV-T-016) ---
 
+
 def test_high_ranked_above_medium():
-    high = _stat(subtopic="A", subtopic_avg=54, subject_avg=70)      # gap 16 High
-    medium = _stat(subtopic="B", subtopic_avg=60, subject_avg=70)    # gap 10 Medium
+    high = _stat(subtopic="A", subtopic_avg=54, subject_avg=70)  # gap 16 High
+    medium = _stat(subtopic="B", subtopic_avg=60, subject_avg=70)  # gap 10 Medium
     out = rank_priorities([medium, high])
     assert [p.subtopic for p in out] == ["A", "B"]
 
@@ -99,10 +98,7 @@ def test_tiebreak_by_error_frequency_when_gap_equal():
 
 
 def test_returns_at_most_three():
-    stats = [
-        _stat(subtopic=f"S{i}", subtopic_avg=50 - i, subject_avg=70)
-        for i in range(6)
-    ]
+    stats = [_stat(subtopic=f"S{i}", subtopic_avg=50 - i, subject_avg=70) for i in range(6)]
     out = rank_priorities(stats)
     assert len(out) == 3
 

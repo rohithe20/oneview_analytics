@@ -62,8 +62,8 @@ delete or silently work around an entry without updating this file.
 - **Status:** open, needs seed-data work
 - **Where:** `app/seed/data/topics.csv`, `app/seed/data/papers.csv`,
   `app/seed/data/questions.csv`
-- **Issue:** the seeded reference data only covers one Pure paper
-  (`9709_11_MJ_2025`) and Pure-family topics (Quadratics, Functions,
+- **Issue:** the seeded reference data covers nine AS Pure papers and
+  Pure-family topics only (Quadratics, Functions,
   Coordinate Geometry, Circular Measure, Trigonometry, Series,
   Differentiation, Integration). No Statistics component (5/6) paper,
   questions, or Statistics-specific topics (e.g. Probability, Discrete
@@ -77,21 +77,68 @@ delete or silently work around an entry without updating this file.
   before the Statistics column can show meaningful priority-area data
   in a demo or in production.
 
+## Planning — what "Papers Completed" counts
+
+- **Status:** resolved — PO decision 2026-09-05, implemented
+- **Where:** `docs/specs/planning-performance.md` §"The counted attempt";
+  `app/services/overview.py`; migration `7f3c9d2b41ae`
+- **Issue:** `Papers Completed` counted ATTEMPTS, not distinct papers, so
+  6 attempts on 1 paper read "6 completed" against a target measured in
+  *papers* — and completion could exceed 100%. A first pass fixed the
+  count alone, which left the rest of the panel inconsistent with it: the
+  averages, trend, prediction and priority observation counts still
+  treated a re-sit as a second observation.
+- **PO decision:** for each distinct paper, only the MOST RECENT attempt
+  counts — for every metric and every engine, not just the count. A paper
+  attempted twice contributes one value.
+- **Current behaviour:** implemented once in the data-access layer. The
+  `v_latest_paper_attempts` view names the attempt that counts;
+  `v_topic_performance` is built on it and `app/services/overview.py`
+  joins it, so the engines inherit the reduction. `attempts_count` and
+  `papers_completed` are now the same number, and the `>=5` sufficiency
+  gate counts distinct papers.
+- **Action needed:** none.
+
+## Planning — the target ceiling is 1 with current seed data
+
+- **Status:** resolved — `papers.csv` now seeds nine AS Pure papers
+- **Where:** `app/services/planning.py` `set_target` /
+  `get_available_papers`; `app/seed/data/papers.csv`
+- **Issue:** OV-PL-003 caps a practice target at Available Papers, and
+  `papers.csv` seeded exactly one paper, so the only targets that
+  validated were 0 and 1 for AS/Pure and 0 for every other scope.
+- **Current behaviour:** nine AS Pure papers are seeded, so the AS/Pure
+  ceiling is 9. The Edit Target form's `max` follows the live count, and
+  the form is still disabled with an explanatory note where that count is
+  0 (AS/Statistics, both A Level scopes — see the Statistics seed item
+  above, still open).
+- **Action needed:** none for Pure; the Statistics scopes stay blocked on
+  the Statistics seed-data item above.
+
 ## Overview page — student_id=1 not present in dev DB
 
-- **Status:** informational, no code change needed
+- **Status:** resolved — `demo_attempts.py` now owns this account
 - **Where:** `app/web/routes/overview.py` `STUDENT_ID = 1` (per
   `docs/specs/overview-ui.md` §8: "hardcode student_id=1 for now")
 - **Issue:** the local dev Postgres DB's only pre-existing student was
   seeded at id=3 (`demo_student` / "Laya Eshwarwak"), not id=1. Built
   as specced, the Overview page would show the empty state for a
   student that doesn't exist.
-- **Current behaviour:** a second student was seeded locally at id=1
-  (`demo_student_1` / "Alex Carter", AS level) with 6 Pure attempts
-  (populated/Improving-trend state) and 2 synthetic Statistics attempts
-  (insufficient-data state), purely to verify the UI. The seed script
-  is a one-off in the scratch directory, not committed to the repo or
-  `app/seed/`.
+- **Former behaviour:** a second student was seeded locally at id=1
+  (`demo_student_1` / "Alex Carter") by a one-off script in the scratch
+  directory, never committed. That script hard-coded `marks_scored = 0`
+  for every Integration sub-part, which is why the priority area read
+  0.0%, and it invented a component-5 Statistics paper absent from
+  `papers.csv`.
+- **Current behaviour:** `app/seed/demo_attempts.py` targets
+  `demo_student_1` / "Alex Carter" and is the only committed source of
+  that student's data. The scratch attempts and the phantom Statistics
+  paper were deleted. It now seeds exactly one attempt per distinct AS
+  Pure paper — a re-sit would add nothing under the counted-attempt rule
+  — and its weak area is a subtopic carried by at least three DISTINCT
+  papers, checked before seeding. Statistics still renders the true empty
+  state, because `papers.csv` seeds no Statistics paper.
 - **Action needed:** none for MVP — once real auth exists, `STUDENT_ID`
-  goes away. Worth confirming with the PO whether id=1 should be
-  reserved for a canonical demo account before the Oct 2026 demo.
+  goes away. Two items still worth a PO decision: whether id=1 should be
+  reserved for a canonical demo account before the Oct 2026 demo, and
+  whether student 3's now-orphaned `[DEMO]` attempts should be removed.

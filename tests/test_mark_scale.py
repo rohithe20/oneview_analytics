@@ -12,7 +12,9 @@ Covers:
      denominator, per the spec's "What NOT to do".
 
 Reuses the seeding helpers from test_overview_assembly.py's fixtures
-(same reference data, same student/attempt shape).
+(same reference data, same student/attempt shape) — including its
+DISTINCT-paper history, since only the most recent attempt at a paper
+counts (planning-performance.md, PO decision 2026-09-05).
 """
 
 from __future__ import annotations
@@ -29,8 +31,6 @@ from app.services.overview import (
     build_family_overview,
     get_family_total_marks,
 )
-
-PAPER_REF = "9709_11_MJ_2025"  # Pure, total_marks=75 per app/seed/data/papers.csv
 
 
 def _seed_reference_data(db):
@@ -54,14 +54,27 @@ def _make_student(db) -> Student:
     return student
 
 
-PURE_WEAK_TOPIC = "Definite & indefinite integration"  # 9 of 75 marks, per questions.csv
+PURE_WEAK_TOPIC = "Integration as reverse of differentiation"
+
+# The same five distinct AS Pure papers test_overview_assembly.py uses, in the
+# same order — scoring PURE_WEAK_TOPIC at 0 and everything else at full marks
+# gives 94.67, 96.00, 94.67, 94.67 and 93.33, averaging 94.67 of 75 marks.
+PURE_PAPER_REFS = (
+    "9709_11_MJ_2025",
+    "9709_12_MJ_2025",
+    "9709_13_MJ_2025",
+    "9709_15_MJ_2025",
+    "9709_11_ON_2025",
+)
+PURE_AVERAGE_PERCENTAGE = 94.67
+PURE_RECENT_PERCENTAGE = 93.33
 
 
-def _record_pure_attempt_at_88_percent(db, student, paper, completed_at):
-    """Full marks everywhere except PURE_WEAK_TOPIC (9/75 marks) -> 66/75 = 88%.
+def _record_pure_attempt(db, student, paper, completed_at):
+    """Full marks everywhere except PURE_WEAK_TOPIC.
 
     Same scoring shape as test_overview_assembly.py's fixture, so the
-    resulting 88.0% average is exact rather than order-dependent.
+    resulting percentages are exact rather than order-dependent.
     """
     from sqlalchemy import select
 
@@ -83,13 +96,46 @@ def _record_pure_attempt_at_88_percent(db, student, paper, completed_at):
     return attempt
 
 
-def _seed_statistics_paper(db, subjects, topics):
+def _record_pure_attempt_scored(db, student, paper, completed_at, score):
+    """One completed attempt scoring every sub-part through `score`."""
+    from sqlalchemy import select
+
+    attempt = Attempt(
+        student_id=student.id,
+        paper_id=paper.id,
+        status=AttemptStatus.COMPLETED,
+        completed_at=completed_at,
+    )
+    db.add(attempt)
+    db.flush()
+    sub_parts = db.scalars(
+        select(SubPart).join(SubPart.question).where(SubPart.question.has(paper_id=paper.id))
+    ).all()
+    for sp in sub_parts:
+        db.add(SubPartResult(attempt_id=attempt.id, sub_part_id=sp.id, marks_scored=score(sp)))
+    db.commit()
+    return attempt
+
+
+def _record_full_marks(db, student, paper, completed_at):
+    return _record_pure_attempt_scored(db, student, paper, completed_at, lambda sp: sp.max_marks)
+
+
+def _record_zero_marks(db, student, paper, completed_at):
+    return _record_pure_attempt_scored(db, student, paper, completed_at, lambda sp: 0)
+
+
+def _seed_statistics_paper(db, subjects, topics, variant: int = 1):
     """A Statistics paper (component 5) whose total is 60, not 75 — the
-    contract's proof that get_family_total_marks isn't hard-coded."""
+    contract's proof that get_family_total_marks isn't hard-coded.
+
+    `variant` distinguishes papers so a caller can seed several DISTINCT
+    ones; a paper is subject + component + variant + session + year.
+    """
     paper = Paper(
         subject_id=subjects["9709"].id,
         component=5,
-        variant=1,
+        variant=variant,
         session=ExamSession.MAY_JUNE,
         year=2025,
         total_marks=60,
@@ -116,7 +162,7 @@ def _seed_statistics_paper(db, subjects, topics):
 
 
 def _record_stats_attempt_at_88_percent(db, student, paper, sub_part, completed_at):
-    """22/25 = 88% — same percentage as the Pure fixture, different total."""
+    """22/25 = 88% on one Statistics paper, whose family total is 60."""
     attempt = Attempt(
         student_id=student.id,
         paper_id=paper.id,
@@ -205,24 +251,50 @@ def test_predicted_marks_range_none_when_no_prediction_or_no_total():
 def test_family_overview_marks_fields_for_pure(db_session):
     subjects, topics, papers = _seed_reference_data(db_session)
     student = _make_student(db_session)
-    paper = papers[PAPER_REF]
 
     start = datetime(2026, 1, 1)
-    for i in range(5):
-        _record_pure_attempt_at_88_percent(
-            db_session, student, paper, start + timedelta(days=7 * i)
-        )
+    for i, ref in enumerate(PURE_PAPER_REFS):
+        _record_pure_attempt(db_session, student, papers[ref], start + timedelta(days=7 * i))
 
     overview = build_family_overview(db_session, student.id, "AS", "Pure")
 
-    assert overview.metrics.average_percentage == 88.0
+    assert overview.metrics.average_percentage == PURE_AVERAGE_PERCENTAGE
+    assert overview.metrics.recent_percentage == PURE_RECENT_PERCENTAGE
     assert overview.total_marks == 75
-    assert overview.average_score_marks == 66.0
-    assert overview.recent_score_marks == 66.0
+    assert overview.average_score_marks == 71.0  # 94.67% of 75
+    assert overview.recent_score_marks == 70.0  # 93.33% of 75
 
-    assert overview.predicted_percentage == 88.0
-    assert overview.predicted_marks_low == 63.8
-    assert overview.predicted_marks_high in (68.2, 68.3)
+    # The mark range is the engine's percentage scaled by the family total,
+    # +/- PREDICTED_RANGE_MARGIN_PP — not a second prediction.
+    predicted = overview.predicted_percentage
+    assert predicted is not None
+    assert overview.predicted_marks_low == _percentage_to_marks(predicted - 3.0, 75)
+    assert overview.predicted_marks_high == _percentage_to_marks(predicted + 3.0, 75)
+
+
+def test_family_overview_marks_ignore_superseded_attempts(db_session):
+    """A re-sit replaces its paper's earlier attempt in the mark figures too.
+
+    Full marks on every paper, then one paper re-sat at zero: the average
+    must fall to the four-of-five level, proving the marks fields are scaled
+    from the reduced series and not from every attempt ever saved.
+    """
+    subjects, topics, papers = _seed_reference_data(db_session)
+    student = _make_student(db_session)
+
+    start = datetime(2026, 1, 1)
+    for i, ref in enumerate(PURE_PAPER_REFS):
+        _record_full_marks(db_session, student, papers[ref], start + timedelta(days=7 * i))
+
+    _record_zero_marks(db_session, student, papers[PURE_PAPER_REFS[0]], start + timedelta(days=60))
+
+    overview = build_family_overview(db_session, student.id, "AS", "Pure")
+
+    assert overview.attempts_count == 5
+    assert overview.metrics.average_percentage == 80.0  # (0 + 100*4) / 5
+    assert overview.total_marks == 75
+    assert overview.average_score_marks == 60.0  # 80% of 75
+    assert overview.recent_score_marks == 0.0  # the re-sit is the latest
 
 
 def test_family_overview_marks_scaled_to_family_total_not_75(db_session):
@@ -230,11 +302,13 @@ def test_family_overview_marks_scaled_to_family_total_not_75(db_session):
     60 — average_score_marks must come out at 52.8, not the Pure 66.0,
     proving the scale isn't hard-coded to 75."""
     subjects, topics, papers = _seed_reference_data(db_session)
-    stats_paper, sub_part = _seed_statistics_paper(db_session, subjects, topics)
     student = _make_student(db_session)
 
+    # Five DISTINCT Statistics papers — one attempt each, since a re-sit of
+    # one paper would collapse to a single counted attempt.
     start = datetime(2026, 1, 1)
     for i in range(5):
+        stats_paper, sub_part = _seed_statistics_paper(db_session, subjects, topics, variant=i + 1)
         _record_stats_attempt_at_88_percent(
             db_session, student, stats_paper, sub_part, start + timedelta(days=7 * i)
         )

@@ -6,9 +6,9 @@ Do NOT edit expected values to force a pass. If the BRD worked example
 (test_brd_worked_example) can't be reconciled, that is a real spec
 ambiguity for the PO — it is marked xfail on purpose.
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 import pytest
@@ -39,7 +39,9 @@ def test_five_attempts_uses_full_weights():
     assert result.confidence == "normal"
 
 
-@pytest.mark.xfail(reason="BRD states 80.08% for this set but ordering convention is ambiguous — PO must confirm")
+@pytest.mark.xfail(
+    reason="BRD states 80.08% for this set but ordering convention is ambiguous — PO must confirm"
+)
 def test_brd_worked_example():
     result = predict_performance(_attempts([80, 84, 76, 88, 72]), PredictionConfig())
     assert result.predicted_percentage == pytest.approx(80.08)
@@ -80,8 +82,6 @@ def test_zero_attempts_empty_state():
 
 def test_uses_only_five_most_recent():
     # 6 attempts; oldest (50) must be ignored.
-    result = predict_performance(
-        _attempts([50, 80, 84, 76, 88, 72]), PredictionConfig()
-    )
+    result = predict_performance(_attempts([50, 80, 84, 76, 88, 72]), PredictionConfig())
     expected = 72 * 0.35 + 88 * 0.25 + 76 * 0.20 + 84 * 0.12 + 80 * 0.08
     assert result.predicted_percentage == pytest.approx(round(expected, 2))

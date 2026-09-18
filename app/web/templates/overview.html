@@ -2,7 +2,6 @@
 {% import "partials/family_panel.html" as fp %}
 
 {% block title %}Overview{% endblock %}
-{% block page_heading %}Overview{% endblock %}
 
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -21,12 +20,13 @@
                     labels: points.map(function (_, i) { return i + 1; }),
                     datasets: [{
                         data: points,
-                        borderColor: '#7c3aed',
-                        backgroundColor: 'rgba(124, 58, 237, 0.08)',
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.07)',
+                        borderWidth: 2,
                         fill: true,
                         tension: 0.3,
                         pointRadius: 3,
-                        pointBackgroundColor: '#7c3aed',
+                        pointBackgroundColor: '#4f46e5',
                     }],
                 },
                 options: {
@@ -34,8 +34,29 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { display: false },
-                        y: { min: 0, max: 100, ticks: { stepSize: 25 } },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Practice Papers',
+                                color: '#94a3b8',
+                                font: { size: 10 },
+                            },
+                            grid: { display: false },
+                            border: { color: '#e2e8f0' },
+                            ticks: { color: '#94a3b8', font: { size: 10 } },
+                        },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: '#f1f5f9' },
+                            border: { display: false },
+                            ticks: {
+                                stepSize: 25,
+                                color: '#94a3b8',
+                                font: { size: 10 },
+                                callback: function (value) { return value + '%'; },
+                            },
+                        },
                     },
                 },
             });
@@ -47,12 +68,103 @@
 {% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-2 gap-5 items-stretch">
     {% for panel in panels %}
-    <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-        <h2 class="text-base font-semibold text-slate-900 mb-4">{{ panel.label }}</h2>
-        {{ fp.render_family_panel(panel) }}
+    {% set metrics = panel.overview.metrics %}
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+
+        {# --- Family panel header (overview-ui.md §2, snapshot) --- #}
+        <div class="flex items-center gap-3">
+            <span class="h-10 w-10 shrink-0 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+                {% if panel.family == 'Pure' %}
+                <span class="font-serif italic text-lg font-semibold leading-none">fx</span>
+                {% else %}
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+                {% endif %}
+            </span>
+            <h2 class="text-lg font-bold uppercase tracking-wide text-indigo-700">{{ panel.label }}</h2>
+
+            {# --- D2: Edit Target (overview-completion.md, OV-PL-003) --- #}
+            {% set panel_error = target_error if target_error and target_error.family == panel.family else none %}
+            <details class="ml-auto relative" {% if panel_error %}open{% endif %}>
+                <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 [&::-webkit-details-marker]:hidden rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-indigo-700">
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                    </svg>
+                    Edit Target
+                </summary>
+
+                {# hx-boost="false": a plain form POST + 303 so the browser lands
+                   on /overview?level=... rather than the action URL. #}
+                <form method="post" action="/overview/target" hx-boost="false"
+                      class="absolute right-0 z-20 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
+                    <input type="hidden" name="level" value="{{ exam_level }}">
+                    <input type="hidden" name="family" value="{{ panel.family }}">
+
+                    <label for="target-{{ panel.family }}"
+                           class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                        Practice Target
+                    </label>
+                    <div class="mt-2 flex items-center gap-2">
+                        <input type="number" id="target-{{ panel.family }}" name="target_value"
+                               min="0" max="{{ metrics.available_papers }}" step="1" required
+                               value="{{ metrics.target_value if metrics.target_value is not none else 0 }}"
+                               {% if metrics.available_papers == 0 %}disabled{% endif %}
+                               class="w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-sm font-semibold text-slate-900 focus:border-indigo-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400">
+                        <span class="text-xs text-slate-500">papers</span>
+                    </div>
+
+                    {% if metrics.available_papers == 0 %}
+                    <p class="mt-2 text-xs text-slate-400">
+                        No papers are available in this scope yet, so a target cannot be set.
+                    </p>
+                    {% else %}
+                    <p class="mt-2 text-xs text-slate-400">
+                        0 &ndash; {{ metrics.available_papers }}. Set 0 to clear the target.
+                    </p>
+                    {% endif %}
+
+                    {% if panel_error %}
+                    <p class="mt-2 text-xs font-medium text-rose-600">{{ panel_error.message }}</p>
+                    {% endif %}
+
+                    <button type="submit"
+                            {% if metrics.available_papers == 0 %}disabled{% endif %}
+                            class="mt-3 w-full rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400">
+                        Save Target
+                    </button>
+                </form>
+            </details>
+        </div>
+
+        <div class="mt-3 flex items-center gap-6 text-xs text-slate-500">
+            <span>Practice Target:
+                <span class="font-semibold text-slate-700">
+                    {#- target 0 reads as not-set, per OV-PL-006 -#}
+                    {%- if metrics.target_value %} {{ metrics.target_value }} papers{% else %} Not set{% endif -%}
+                </span>
+            </span>
+            <span>Available Papers:
+                <span class="font-semibold text-slate-700">{{ metrics.available_papers }}</span>
+            </span>
+        </div>
+
+        <div class="mt-4">
+            {{ fp.render_family_panel(panel) }}
+        </div>
     </section>
     {% endfor %}
 </div>
+
+<p class="mt-5 flex items-center gap-2 text-xs text-slate-400">
+    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+         stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+    </svg>
+    Analytics are based on eligible practice papers with recorded questions and marks.
+</p>
 {% endblock %}

@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy import func, select
 
 from app.models import Paper, Question, Subject, SubPart, Topic
+from app.seed.demo_attempts import MIN_WEAK_TOPIC_PAPERS, WEAK_TOPIC_NAME
 from app.seed.loader import (
     SeedError,
     load_papers,
@@ -28,22 +29,49 @@ def test_seed_loads_expected_shape(db_session):
 
     assert count(db_session, Subject) == 1
     assert count(db_session, Topic) == 44  # 8 top-level topics + 36 subtopics
-    assert count(db_session, Paper) == 1
+    assert count(db_session, Paper) == 9  # every AS Pure paper in papers.csv
     assert count(db_session, Question) > 0
     assert count(db_session, SubPart) >= count(db_session, Question)
 
 
 def test_marks_sum_to_paper_total(db_session):
-    """The checksum that catches transcription errors."""
+    """The checksum that catches transcription errors — for every paper."""
     run_seed(db_session)
 
-    paper = db_session.scalar(select(Paper))
-    total = db_session.scalar(
-        select(func.sum(SubPart.max_marks))
+    papers = db_session.scalars(select(Paper)).all()
+    assert papers
+
+    for paper in papers:
+        total = db_session.scalar(
+            select(func.sum(SubPart.max_marks))
+            .join(Question, Question.id == SubPart.question_id)
+            .where(Question.paper_id == paper.id)
+        )
+        assert total == paper.total_marks, paper.paper_ref
+
+
+def test_demo_weak_subtopic_is_carried_by_enough_distinct_papers(db_session):
+    """The demo's weak area must clear the priority engine's gate on DISTINCT
+    papers alone.
+
+    Only the most recent attempt at a paper counts (planning-performance.md,
+    PO decision 2026-09-05), so re-sitting one paper can no longer top up a
+    subtopic's observation count. If a questions.csv edit ever leaves
+    WEAK_TOPIC_NAME mapped in fewer than MIN_WEAK_TOPIC_PAPERS papers, the
+    demo's Priority Areas card silently empties — catch it here rather than
+    in the demo.
+    """
+    run_seed(db_session)
+
+    papers_carrying_it = db_session.scalar(
+        select(func.count(func.distinct(Question.paper_id)))
+        .select_from(SubPart)
         .join(Question, Question.id == SubPart.question_id)
-        .where(Question.paper_id == paper.id)
+        .join(Topic, Topic.id == SubPart.topic_id)
+        .where(Topic.name == WEAK_TOPIC_NAME)
     )
-    assert total == paper.total_marks
+
+    assert papers_carrying_it >= MIN_WEAK_TOPIC_PAPERS
 
 
 def test_seed_is_idempotent(db_session):
@@ -189,3 +217,44 @@ def test_two_level_nesting_aborts(db_session, tmp_path, monkeypatch):
 
     with pytest.raises(SeedError, match="one level of nesting"):
         run_seed(db_session)
+
+
+def test_reseed_repoints_subpart_to_new_topic(db_session, tmp_path, monkeypatch):
+    """A changed topic_name in questions.csv must reach an already-seeded DB.
+
+    The loader is otherwise insert-only, which silently stranded every
+    Integration sub-part on the top-level topic after subtopics were
+    added (docs/specs/subtopic-seed.md).
+    """
+    import app.seed.loader as loader
+
+    (tmp_path / "subjects.csv").write_text("board,code,name\nCambridge,9709,Mathematics\n")
+    (tmp_path / "topics.csv").write_text(
+        "subject_code,name,parent_topic,sort_order\n"
+        "9709,Trigonometry,,5\n"
+        "9709,Identities,Trigonometry,1\n"
+    )
+    (tmp_path / "papers.csv").write_text(
+        "paper_ref,subject_code,component,variant,session,year,total_marks,level\n"
+        "TEST_PAPER,9709,1,2,MAY_JUNE,2024,4,AS\n"
+    )
+    questions = tmp_path / "questions.csv"
+    header = "paper_ref,question_number,sub_part_label,max_marks,topic_name\n"
+
+    # First load maps the sub-part at the top-level topic.
+    questions.write_text(header + "TEST_PAPER,1,,4,Trigonometry\n")
+    monkeypatch.setattr(loader, "DATA_DIR", tmp_path)
+    run_seed(db_session)
+
+    sub_part = db_session.scalar(select(SubPart))
+    top_level = db_session.scalar(select(Topic).where(Topic.name == "Trigonometry"))
+    assert sub_part.topic_id == top_level.id
+
+    # The CSV is re-pointed at the subtopic; re-seeding must follow it.
+    questions.write_text(header + "TEST_PAPER,1,,4,Identities\n")
+    run_seed(db_session)
+
+    subtopic = db_session.scalar(select(Topic).where(Topic.name == "Identities"))
+    db_session.refresh(sub_part)
+    assert sub_part.topic_id == subtopic.id
+    assert count(db_session, SubPart) == 1  # re-pointed, not duplicated

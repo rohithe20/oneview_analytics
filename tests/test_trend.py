@@ -4,9 +4,8 @@ is the point of this suite.
 Agent: implement app/services/trend.py per docs/specs/trend-logic.md to
 make these pass.
 """
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 from app.services.trend import classify_trend
 
