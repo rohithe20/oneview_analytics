@@ -10,11 +10,22 @@ from app.core.db import SessionLocal
 from app.models import Attempt, Paper, Student, SubPart, SubPartResult, Topic
 from app.models.enums import AttemptStatus
 
-# The Overview page renders this account (overview.py STUDENT_ID, per
-# docs/specs/overview-ui.md §8). This module is the only committed source
-# of its data — see docs/open-items.md.
-DEMO_STUDENT_USERNAME = "demo_student_1"
-DEMO_STUDENT_DISPLAY_NAME = "Alex Carter"
+# The demo login accounts, main account first. Overview renders whichever
+# student is logged in (docs/specs/login-auth.md), so an account with no
+# attempts shows the empty state no matter how good the seed data is — every
+# account someone actually signs in as needs its own copy. Each gets the
+# IDENTICAL run of marks (see RANDOM_SEED), so which one you demo from
+# changes nothing on screen but the name.
+#
+# Rows are matched by username and created only if missing; an existing
+# password_hash is never touched. Give a new account a real one with
+# `python -m app.seed.set_password <username> <password>` — until then its
+# placeholder hash fails login cleanly. This module is the only committed
+# source of these students' attempts — see docs/open-items.md.
+DEMO_STUDENTS: list[tuple[str, str]] = [
+    ("demo_student", "Laya Eshwarwak"),
+    ("demo_student_1", "Alex Carter"),
+]
 DEMO_MARKER_PREFIX = "[DEMO]"  # stored in attempt notes for identification
 
 # A subtopic name the demo student is deliberately weak at, so priority
@@ -66,15 +77,24 @@ GENERAL_NOISE = 0.06
 BASE_ABILITY_START = 0.55
 BASE_ABILITY_END = 0.87
 
-random.seed(42)  # reproducible demo data
+# Reproducible demo data. Re-seeded at the start of every student's run
+# rather than once at import, which is what makes each demo account's marks
+# identical instead of each one continuing the previous student's stream.
+RANDOM_SEED = 42
 
 
-def get_or_create_demo_student(db) -> Student:
-    student = db.scalar(select(Student).where(Student.username == DEMO_STUDENT_USERNAME))
+def get_or_create_demo_student(db, username: str, display_name: str) -> Student:
+    """Find the demo student by username, creating it only if absent.
+
+    Never overwrites an existing row: the account may already carry a real
+    bcrypt hash set with `python -m app.seed.set_password`, and re-running the
+    seeder must not lock anyone out of it.
+    """
+    student = db.scalar(select(Student).where(Student.username == username))
     if student is None:
         student = Student(
-            username=DEMO_STUDENT_USERNAME,
-            display_name=DEMO_STUDENT_DISPLAY_NAME,
+            username=username,
+            display_name=display_name,
             level="AS",
             password_hash="not-a-real-hash",
         )
@@ -163,6 +183,10 @@ def seed_demo_attempts(
     construction, returned as a pair because the caller reports both and the
     equality is the property worth showing.
     """
+    # Every demo account gets the same run of marks, not a continuation of the
+    # previous account's random stream.
+    random.seed(RANDOM_SEED)
+
     papers = papers_in_scope(db, exam_level, component_family)
     if not papers:
         raise SystemExit(
@@ -254,22 +278,28 @@ def _record_attempt(
 def main() -> int:
     wipe_only = "--wipe" in sys.argv
     with SessionLocal() as db:
-        student = get_or_create_demo_student(db)
-        removed = wipe_demo_attempts(db, student)
-        if wipe_only:
-            db.commit()
-            print(f"Removed {removed} demo attempt(s).")
-            return 0
+        for username, display_name in DEMO_STUDENTS:
+            student = get_or_create_demo_student(db, username, display_name)
+            removed = wipe_demo_attempts(db, student)
 
-        created, distinct_papers = seed_demo_attempts(db, student)
+            if wipe_only:
+                print(f"Removed {removed} demo attempt(s) for '{username}' (id={student.id}).")
+                continue
+
+            created, distinct_papers = seed_demo_attempts(db, student)
+            print(
+                f"Removed {removed} old demo attempt(s), created {created} new one(s) "
+                f"across {distinct_papers} distinct paper(s) for student "
+                f"'{student.username}' (id={student.id}), scope "
+                f"{DEMO_EXAM_LEVEL} / {DEMO_COMPONENT_FAMILY}."
+            )
+
+        # One transaction for every account: a failure part-way through leaves
+        # no student holding a half-seeded run.
         db.commit()
-        print(
-            f"Removed {removed} old demo attempt(s), created {created} new one(s) "
-            f"across {distinct_papers} distinct paper(s) for student "
-            f"'{student.username}' (id={student.id}), scope "
-            f"{DEMO_EXAM_LEVEL} / {DEMO_COMPONENT_FAMILY}."
-        )
-        print(f"Deliberate weak topic: {WEAK_TOPIC_NAME}")
+
+        if not wipe_only:
+            print(f"Deliberate weak topic: {WEAK_TOPIC_NAME}")
         return 0
 
 

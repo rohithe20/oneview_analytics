@@ -115,30 +115,37 @@ delete or silently work around an entry without updating this file.
 - **Action needed:** none for Pure; the Statistics scopes stay blocked on
   the Statistics seed-data item above.
 
-## Overview page — student_id=1 not present in dev DB
+## Overview page — which student the demo data belongs to
 
-- **Status:** resolved — `demo_attempts.py` now owns this account
-- **Where:** `app/web/routes/overview.py` `STUDENT_ID = 1` (per
-  `docs/specs/overview-ui.md` §8: "hardcode student_id=1 for now")
-- **Issue:** the local dev Postgres DB's only pre-existing student was
-  seeded at id=3 (`demo_student` / "Laya Eshwarwak"), not id=1. Built
-  as specced, the Overview page would show the empty state for a
-  student that doesn't exist.
+- **Status:** resolved — `demo_attempts.py` owns both demo accounts
+- **Where:** `app/seed/demo_attempts.py` `DEMO_STUDENTS`
+- **Issue:** the page used to hardcode `student_id = 1`, while the local
+  dev DB's only pre-existing student was id=3 (`demo_student` / "Laya
+  Eshwarwak"). Built as specced (`docs/specs/overview-ui.md` §8,
+  "hardcode student_id=1 for now"), the Overview would show the empty
+  state for a student that didn't exist.
 - **Former behaviour:** a second student was seeded locally at id=1
   (`demo_student_1` / "Alex Carter") by a one-off script in the scratch
   directory, never committed. That script hard-coded `marks_scored = 0`
   for every Integration sub-part, which is why the priority area read
   0.0%, and it invented a component-5 Statistics paper absent from
-  `papers.csv`.
-- **Current behaviour:** `app/seed/demo_attempts.py` targets
-  `demo_student_1` / "Alex Carter" and is the only committed source of
-  that student's data. The scratch attempts and the phantom Statistics
-  paper were deleted. It now seeds exactly one attempt per distinct AS
-  Pure paper — a re-sit would add nothing under the counted-attempt rule
-  — and its weak area is a subtopic carried by at least three DISTINCT
-  papers, checked before seeding. Statistics still renders the true empty
-  state, because `papers.csv` seeds no Statistics paper.
-- **Action needed:** none for MVP — once real auth exists, `STUDENT_ID`
-  goes away. Two items still worth a PO decision: whether id=1 should be
-  reserved for a canonical demo account before the Oct 2026 demo, and
-  whether student 3's now-orphaned `[DEMO]` attempts should be removed.
+  `papers.csv`. The scratch attempts and the phantom Statistics paper
+  were deleted.
+- **Current behaviour:** the hardcode is gone — `student_id` comes from
+  the session (`docs/specs/login-auth.md`), so the page belongs to
+  whoever logs in. `demo_attempts.py` therefore seeds EVERY demo login
+  account listed in `DEMO_STUDENTS` — `demo_student` / "Laya Eshwarwak"
+  (main) and `demo_student_1` / "Alex Carter" — and is the only
+  committed source of their attempts. Both get the identical run: the
+  RNG is re-seeded per student, so the two accounts show the same
+  numbers and the choice of demo login is cosmetic. Each gets exactly
+  one attempt per distinct AS Pure paper — a re-sit would add nothing
+  under the counted-attempt rule — and the weak area is a subtopic
+  carried by at least three DISTINCT papers, checked before seeding.
+  Statistics still renders the true empty state, because `papers.csv`
+  seeds no Statistics paper.
+- **Action needed:** none. Both former PO questions are now moot: no id
+  is reserved or special (accounts are matched by username, not id), and
+  student 3's attempts are no longer orphaned — they are seeded and
+  refreshed on every run. Adding a demo account is a line in
+  `DEMO_STUDENTS` plus `python -m app.seed.set_password`.

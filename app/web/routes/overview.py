@@ -4,9 +4,9 @@ from urllib.parse import parse_qsl
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.auth import CurrentStudent
 from app.core.db import get_db
 from app.models import Student
 from app.services.overview import build_family_overview
@@ -15,7 +15,6 @@ from app.services.planning import TargetValidationError, set_target
 router = APIRouter()
 templates = Jinja2Templates(directory="app/web/templates")
 
-STUDENT_ID = 1
 ALLOWED_LEVELS = {"AS", "A"}
 FAMILIES = ["Pure", "Statistics"]
 FAMILY_LABELS = {"Pure": "Pure Mathematics", "Statistics": "Statistics"}
@@ -93,18 +92,24 @@ templates.env.globals["trend_text_classes"] = TREND_TEXT_CLASSES
 def _render_overview(
     request: Request,
     db: Session,
+    student: Student,
     exam_level: str,
     target_error: dict | None = None,
     status_code: int = 200,
 ):
-    student = db.scalar(select(Student).where(Student.id == STUDENT_ID))
-    student_name = student.display_name if student else "Unknown Student"
+    """Render the Overview for ONE student — the logged-in one.
+
+    `student` arrives from the session via get_current_student, never from the
+    request, so the scope filter (student_id, exam_level, component_family)
+    can only ever address the caller's own data.
+    """
+    student_name = student.display_name
 
     panels = [
         {
             "family": family,
             "label": FAMILY_LABELS[family],
-            "overview": build_family_overview(db, STUDENT_ID, exam_level, family),
+            "overview": build_family_overview(db, student.id, exam_level, family),
         }
         for family in FAMILIES
     ]
@@ -130,13 +135,18 @@ def _render_overview(
 def overview(
     request: Request,
     db: Annotated[Session, Depends(get_db)],
+    student: CurrentStudent,
     level: str | None = None,
 ):
-    student = db.scalar(select(Student).where(Student.id == STUDENT_ID))
-    default_level = student.level if student else "AS"
-    exam_level = level if level in ALLOWED_LEVELS else default_level
+    """`level` is the only scope dimension the request may choose.
 
-    return _render_overview(request, db, exam_level)
+    It selects AS or A within the caller's own data; student_id is fixed by
+    the session. An unrecognised value falls back to the student's own level
+    rather than erroring.
+    """
+    exam_level = level if level in ALLOWED_LEVELS else student.level
+
+    return _render_overview(request, db, student, exam_level)
 
 
 async def _urlencoded_body(request: Request) -> dict[str, str]:
@@ -152,8 +162,16 @@ async def _urlencoded_body(request: Request) -> dict[str, str]:
 
 
 @router.post("/overview/target")
-async def update_target(request: Request, db: Annotated[Session, Depends(get_db)]):
-    """Set the practice target for one (level, family) scope — D2 / OV-PL-003."""
+async def update_target(
+    request: Request,
+    db: Annotated[Session, Depends(get_db)],
+    student: CurrentStudent,
+):
+    """Set the practice target for one (level, family) scope — D2 / OV-PL-003.
+
+    The form carries level and family; the student it belongs to comes from
+    the session, so a posted student_id would be ignored even if one were sent.
+    """
     form = await _urlencoded_body(request)
     level = form.get("level")
     family = form.get("family")
@@ -167,17 +185,19 @@ async def update_target(request: Request, db: Annotated[Session, Depends(get_db)
         return _render_overview(
             request,
             db,
+            student,
             level,
             target_error={"family": family, "message": "Enter a whole number of papers."},
             status_code=400,
         )
 
     try:
-        set_target(db, STUDENT_ID, level, family, value)
+        set_target(db, student.id, level, family, value)
     except TargetValidationError as exc:
         return _render_overview(
             request,
             db,
+            student,
             level,
             target_error={"family": family, "message": str(exc)},
             status_code=400,
