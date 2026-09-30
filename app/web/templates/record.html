@@ -232,8 +232,15 @@
     // fired by the marks inputs themselves and discards nothing, so it passes
     // through untouched. Everything else prompts once when the table is dirty.
     document.body.addEventListener('htmx:confirm', function (e) {
-        if (!isDirty()) return;
         var elt = e.detail.elt;
+        // Save/Update is the deliberate save action, not a discard, so it must
+        // never hit this prompt — clicking Save IS the save. The submit/Cancel
+        // handlers set `leaving`, and a boosted whole-form submit surfaces here
+        // as the form element itself (checked directly so we're safe even if
+        // htmx fires confirm before our submit handler runs). Only real
+        // discards — nav links, the Level switch — fall through to the guard.
+        if (leaving || elt === form) return;
+        if (!isDirty()) return;
         if (elt && elt.closest && elt.closest('#marks-form')) return;
         e.preventDefault();
         if (window.confirm('You have unsaved marks on this paper. Discard them and continue?')) {
