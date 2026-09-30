@@ -1,8 +1,17 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy import (
+    CheckConstraint,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    String,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
@@ -35,6 +44,11 @@ class Attempt(Base):
     notes: Mapped[str | None] = mapped_column(String(300))
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # The BRD's "Date Completed" (record-service.md) — the exam date the student
+    # states on the form. Distinct from completed_at, which is the timestamp the
+    # analytics views order by; app/services/record.py writes both. Migration
+    # 7c4c306f3eca.
+    date_completed: Mapped[date | None] = mapped_column(Date())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -85,6 +99,10 @@ class SubPartResult(Base):
     attempt_id: Mapped[int] = mapped_column(ForeignKey("attempts.id"), index=True)
     sub_part_id: Mapped[int] = mapped_column(ForeignKey("sub_parts.id"), index=True)
     marks_scored: Mapped[int]
+    # One of the nine controlled values in app/services/record.py ERROR_TYPES.
+    # Nullable: the seed/demo path and pre-existing rows never set it. Column
+    # created by migration 15047ca50390 — mapping it here needs no migration.
+    error_type: Mapped[str | None] = mapped_column(String(30))
 
     __table_args__ = (
         UniqueConstraint("attempt_id", "sub_part_id", name="result_identity"),

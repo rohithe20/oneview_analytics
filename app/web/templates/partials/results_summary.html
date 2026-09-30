@@ -1,0 +1,8 @@
+{#
+  Response for POST /record/summary — just the four Results Summary cards
+  (§9), swapped into #results-summary as the student edits Marks Lost. The
+  marks inputs are left untouched, so focus and in-progress typing survive
+  the recalc.
+#}
+{% import "partials/question_table.html" as qt %}
+{{ qt.results_summary(summary) }}

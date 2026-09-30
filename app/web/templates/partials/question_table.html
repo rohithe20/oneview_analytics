@@ -1,0 +1,192 @@
+{#
+  Question-level table + Results Summary (BRD §7, §8, §9, §17, §25.1).
+
+  This is the loaded-paper state of the question region. It replaces the §18
+  "Initial" placeholder once all four Paper Details dropdowns resolve to a
+  paper, and is delivered by the same out-of-band swap of #paper-status that
+  the selection cascade already drives.
+
+  What this slice does (and does NOT): it renders the flat table and the live
+  Results Summary and recalculates the summary as Marks Lost changes (§14/§15).
+  It does NOT save — there is no Save/Update action here yet (BRD §10 is a
+  later task). So the inputs live in a plain #marks-form <div>, not a <form>:
+  base.html sets hx-boost on <body>, and a stray Enter inside a real <form>
+  would navigate.
+
+  §17 read-only columns: #, Question, Topic, Sub-topic and Max Marks come from
+  the question database and are text, not controls. Only Marks Lost and Error
+  Type are editable.
+#}
+
+{% set cell = "px-4 py-3 text-sm text-slate-700" %}
+{% set head = "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500" %}
+{# Server-side "needs attention" ring, matching the classes rpMarkChanged()
+   toggles client-side (record.html). Applied on a rejected save so every bad
+   row is flagged at once (§12/§18). The ! wins over the control's own border. #}
+{% set invalid_ring = "!border-rose-400 !ring-2 !ring-rose-300" %}
+
+
+{#
+  One Error Type dropdown (BRD §8). The nine controlled values come from
+  `error_types` (app/services/record.py ERROR_TYPES) — never a literal list in
+  the template. §8 No Error rule, rendered for the row's CURRENT Marks Lost:
+  blank or 0 -> "No Error", selected and locked; > 0 -> a real category is
+  required. rpMarkChanged() re-applies the same rule live as the student types.
+#}
+{% macro error_type_select(row, marks_lost="", error_type="", invalid=false) %}
+{% set locked = (marks_lost|string|trim in ("", "0")) %}
+<select id="error-{{ row.sub_part_id }}" name="error_type_{{ row.sub_part_id }}" required
+        onchange="rpErrorChanged(this)"
+        {% if locked %}disabled{% endif %}
+        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 {% if invalid %}{{ invalid_ring }}{% endif %}">
+    <option value="" {% if not locked and not error_type %}selected{% endif %}>Select error type</option>
+    {% for value in error_types %}
+    <option value="{{ value }}"
+            {% if locked and value == "No Error" %}selected{% elif not locked and value == error_type %}selected{% endif %}>
+        {{ value }}
+    </option>
+    {% endfor %}
+</select>
+{% endmacro %}
+
+
+{#
+  The flat, non-collapsible table (§7, §25.1). Every question and sub-part is
+  its own row; the "#" column is the sequential display index, distinct from
+  the Question identifier ("2(a)").
+#}
+{% macro question_table(paper_id, rows, prefill={}, row_errors=[]) %}
+<div id="marks-form" class="overflow-hidden rounded-xl border border-slate-200">
+    {# paper_id rides inside the recalc's hx-include scope so /record/summary
+       can re-derive Max Marks from the database rather than trust the client. #}
+    <input type="hidden" name="paper_id" value="{{ paper_id }}">
+    <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+            <tr>
+                <th class="{{ head }} w-12">#</th>
+                <th class="{{ head }}">Question</th>
+                <th class="{{ head }}">Topic</th>
+                <th class="{{ head }}">Sub-topic</th>
+                <th class="{{ head }} w-24 text-right">Max Marks</th>
+                <th class="{{ head }} w-28">Marks Lost</th>
+                <th class="{{ head }} w-56">Error Type</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+            {% for row in rows %}
+            {% set row_values = prefill.get(row.sub_part_id, {}) %}
+            {% set marks_value = row_values.get("marks_lost", "") %}
+            {% set error_value = row_values.get("error_type", "") %}
+            {% set invalid = row.sub_part_id in row_errors %}
+            <tr>
+                <td class="{{ cell }} text-slate-400">{{ loop.index }}</td>
+                <td class="{{ cell }} font-semibold text-slate-900">{{ row.display_number }}</td>
+                <td class="{{ cell }}">{{ row.topic }}</td>
+                <td class="{{ cell }}">{{ row.sub_topic }}</td>
+                <td class="{{ cell }} text-right tabular-nums">{{ row.max_marks }}</td>
+                <td class="{{ cell }}">
+                    {# Whole number 0..Max (§7, RP-V-005/006/007). value blank on a
+                       new paper; pre-filled from a saved attempt (§11) or a
+                       rejected submission (§18), so entered marks are never lost. #}
+                    <input type="number" name="marks_lost_{{ row.sub_part_id }}"
+                           data-subpart="{{ row.sub_part_id }}"
+                           min="0" max="{{ row.max_marks }}" step="1" inputmode="numeric"
+                           value="{{ marks_value }}" placeholder="0"
+                           oninput="rpMarkChanged(this)"
+                           hx-post="/record/summary"
+                           hx-trigger="input changed delay:200ms, change"
+                           hx-target="#results-summary"
+                           hx-swap="outerHTML"
+                           hx-include="#marks-form"
+                           class="w-20 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 {% if invalid %}{{ invalid_ring }}{% endif %}">
+                </td>
+                <td class="{{ cell }}">{{ error_type_select(row, marks_value, error_value, invalid) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
+    <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+         stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 0h10.5a2.25 2.25 0 012.25 2.25v6A2.25 2.25 0 0116.5 21h-9A2.25 2.25 0 015.25 18.75v-6a2.25 2.25 0 012.25-2.25z" />
+    </svg>
+    Error Type is locked to "No Error" while Marks Lost is 0.
+</p>
+{% endmacro %}
+
+
+{#
+  Results Summary (§9, §25.2) — four read-only, system-calculated figures.
+  Its own #results-summary element so the live recalc swaps just these cards,
+  leaving the marks inputs (and their focus) untouched. No insight,
+  recommendation, trend, priority or prediction appears here (§9, RP-T-018).
+#}
+{% macro results_summary(summary) %}
+<div id="results-summary" class="grid grid-cols-2 gap-4 md:grid-cols-4">
+    {{ _summary_card("Total Marks", summary.total_marks, "out of 75", "emerald") }}
+    {{ _summary_card("Total Marks Lost", summary.total_marks_lost, "across all rows", "rose") }}
+    {{ _summary_card("Total Score", summary.total_score ~ " / " ~ summary.total_marks, "marks awarded", "indigo") }}
+    {{ _summary_card("Percentage Score", "%.1f"|format(summary.percentage) ~ "%", "of the paper", "violet") }}
+</div>
+{% endmacro %}
+
+{% macro _summary_card(label, value, note, tone) %}
+<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ label }}</p>
+    <p class="mt-1 text-2xl font-bold text-{{ tone }}-600 tabular-nums">{{ value }}</p>
+    <p class="mt-0.5 text-xs text-slate-400">{{ note }}</p>
+</div>
+{% endmacro %}
+
+
+{#
+  The whole question region as one #paper-status element, so the cascade's
+  out-of-band swap replaces it wholesale. Branches over the three §18 states:
+  a resolved paper shows the table + summary; no paper types shows the honest
+  "no papers" message; anything in between keeps the "choose the rest" prompt.
+#}
+{% macro question_region(selection, rows, summary, oob=false, prefill={}, row_errors=[]) %}
+<section id="paper-status" {% if oob %}hx-swap-oob="true"{% endif %} class="space-y-5">
+    {% if selection.is_complete %}
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div class="flex items-baseline justify-between gap-3">
+            <h3 class="text-base font-bold uppercase tracking-wide text-indigo-700">Question-level Performance</h3>
+            <span class="text-sm font-medium text-slate-500">{{ selection.reference }}</span>
+        </div>
+        {% if rows %}
+        <p class="text-sm text-slate-500">Enter marks lost and error type for each question and sub-part.</p>
+        {{ question_table(selection.paper.id, rows, prefill, row_errors) }}
+        {% else %}
+        {# §18 "No valid paper structure": the paper resolved but the question
+           database holds no rows for it, so there is nothing to record and no
+           result to calculate. #}
+        <p class="text-sm text-slate-500">
+            This paper has no question structure in the database yet, so the
+            question-level table cannot be loaded.
+        </p>
+        {% endif %}
+    </section>
+
+    {% if rows %}
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <h3 class="text-base font-bold uppercase tracking-wide text-indigo-700">Results Summary</h3>
+        {{ results_summary(summary) }}
+    </section>
+    {% endif %}
+    {% elif not selection.paper_types %}
+    <section class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+        <p class="text-sm text-slate-500">
+            No {{ selection.level }} Level papers are in the paper database yet, so there is
+            nothing to record against this level.
+        </p>
+    </section>
+    {% else %}
+    <section class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+        <p class="text-sm text-slate-500">
+            Choose Paper Type, Session and Variant to load the question-level table.
+        </p>
+    </section>
+    {% endif %}
+</section>
+{% endmacro %}

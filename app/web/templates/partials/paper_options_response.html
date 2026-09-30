@@ -1,0 +1,12 @@
+{#
+  Response for GET /record/paper-options.
+
+  The dependent dropdowns replace #paper-options directly; the question-level
+  region (§18 placeholder, or the flat table + Results Summary once a paper
+  resolves) is refreshed out-of-band because it sits outside the field grid and
+  so cannot be nested inside the swap target.
+#}
+{% import "partials/paper_options.html" as po %}
+{% import "partials/question_table.html" as qt %}
+{{ po.paper_options(selection) }}
+{{ qt.question_region(selection, rows, summary, oob=true) }}

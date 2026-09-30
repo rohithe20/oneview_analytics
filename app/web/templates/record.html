@@ -1,0 +1,245 @@
+{#
+  Record Practice Paper — page shell, Paper Details, the question-level table
+  and the Save/Update action (BRD §5, §6, §7, §8, §9, §10, §11, §12, §16, §18).
+
+  §5/§17: this page reuses base.html's global header and left navigation and
+  introduces no second nav, no alternate header and no new palette.
+
+  This slice adds the write path: a real <form> wraps Paper Details, the
+  question table and the actions, and posts to /record. Creating uses no
+  attempt_id (one new attempt, RP-F-001); editing carries the attempt_id and
+  updates in place (RP-F-005/006). The save/validation logic is the service's
+  (app/services/record.py) — the page only collects the form and shows what the
+  service returns. No insight, recommendation, prediction or trend appears here
+  (§16): the Results Summary is Total Marks, Marks Lost, Score and Percentage
+  only.
+
+  hx-boost is on <body> (base.html). The form sets hx-boost="false" so its
+  submit is a native POST with a real POST/redirect/GET to Overview, and so a
+  stray Enter cannot become a boosted navigation. The cascade selects and the
+  live-summary inputs keep their own explicit hx-* attributes and are unaffected.
+#}
+{% extends "base.html" %}
+{% import "partials/paper_options.html" as po %}
+{% import "partials/question_table.html" as qt %}
+
+{% block title %}Record Practice Paper{% endblock %}
+
+{% block content %}
+<form id="record-form" method="post" action="/record" hx-boost="false" class="max-w-5xl space-y-5">
+
+    <h2 class="text-2xl font-bold text-slate-900">Record Practice Paper</h2>
+
+    {# Edit mode (§11): the attempt being corrected. Its presence flips the
+       action to "Update" and makes the service update in place rather than
+       create (RP-F-005/006). student_id is NEVER a form field — it comes from
+       the session (§19). #}
+    {% if attempt_id %}
+    <input type="hidden" name="attempt_id" value="{{ attempt_id }}">
+    {% endif %}
+
+    {# Form-level validation (§12): the §12 failures that name no single row —
+       a missing paper or date (RP-V-001), an over-scale total (RP-V-010).
+       Row-level failures are flagged on their own rows below. #}
+    {% if form_errors %}
+    <div role="alert" class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+        <p class="text-sm font-semibold text-rose-700">Please fix the following before saving:</p>
+        <ul class="mt-1.5 list-disc pl-5 text-sm text-rose-600 space-y-0.5">
+            {% for message in form_errors %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {# --- Paper Details (§6) ---------------------------------------------- #}
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 class="text-base font-bold uppercase tracking-wide text-indigo-700">Paper Details</h3>
+
+        {#
+          #paper-details is the hx-include scope: every cascade request carries
+          the current value of all five fields, so the server resolves the whole
+          chain at once instead of tracking partial state.
+        #}
+        <div id="paper-details" class="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+            {# Field order is §25.1's: Level, Paper Type, Session, Variant, Date Completed. #}
+            {{ po.level_field(selection) }}
+            {{ po.paper_options(selection) }}
+
+            <div>
+                <label for="date_completed" class="block text-xs font-semibold text-slate-600">
+                    Date Completed <span class="text-rose-500" aria-hidden="true">*</span>
+                </label>
+                <input type="date" id="date_completed" name="date_completed" required
+                       value="{{ date_completed }}"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            </div>
+        </div>
+    </section>
+
+    {# --- Question-level region (§7, §9): table + live Results Summary,
+           or the §18 placeholder until a paper resolves. --------------------- #}
+    {{ qt.question_region(selection, rows, summary, false, prefill, row_errors) }}
+
+    {# --- Actions (§10) --------------------------------------------------- #}
+    <div class="flex items-center justify-end gap-3">
+        {# Cancel: discard and return to the previous page, no attempt created
+           or modified. It is the deliberate discard action, so it bypasses the
+           unsaved-changes guard rather than prompting again. #}
+        <button type="button" onclick="rpCancel()"
+                class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
+            Cancel
+        </button>
+        <button type="submit"
+                class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+            {% if attempt_id %}Update Practice Paper{% else %}Save Practice Paper{% endif %}
+        </button>
+    </div>
+
+</form>
+
+{#
+  Client half of three BRD rules that must feel immediate. The server owns the
+  authoritative version of all of them (app/services/record.py).
+
+  1. §8 No Error lock — rpMarkChanged() keeps each row's Error Type consistent
+     with its Marks Lost as the student types.
+  2. §12/§18 save — on submit, blank rows are normalised to 0 and locked Error
+     Type selects are re-enabled so every row posts an explicit value (the
+     service requires one per sub-part, RP-V-004; disabled controls don't post).
+  3. §10 / open-items "AS/A toggle navigates away" — switching Level, re-running
+     the cascade or leaving the page must not silently discard entered marks.
+#}
+<script>
+(function () {
+    function marksInputs() {
+        return Array.prototype.slice.call(
+            document.querySelectorAll('#marks-form input[name^="marks_lost_"]')
+        );
+    }
+    // Dirty = at least one Marks Lost has a value. Read live from the DOM, so a
+    // freshly loaded (all-blank) table is clean with no flag to reset on swap.
+    function isDirty() {
+        return marksInputs().some(function (i) { return i.value.trim() !== ''; });
+    }
+
+    // Set while a save or a Cancel is navigating away on purpose, so the
+    // unsaved-changes guard doesn't fight the very actions that resolve it.
+    var leaving = false;
+
+    // Toggle a red "needs attention" ring on a control (BRD §18 row-level
+    // validation feedback). Uses Tailwind's ! override so it wins over the
+    // control's own border/ring classes.
+    var INVALID = ['!border-rose-400', '!ring-2', '!ring-rose-300'];
+    function flag(el, invalid) {
+        INVALID.forEach(function (c) { el.classList.toggle(c, invalid); });
+    }
+
+    // Keep the Error Type select consistent with a row's Marks Lost (BRD §8):
+    //  - blank or 0 -> "No Error", selected and locked (RP-V-008);
+    //  - > 0 -> a real category is required, so "No Error" is not selectable
+    //    and the select is flagged until one is chosen (RP-V-009).
+    function syncErrorType(subpart, marks) {
+        var select = document.getElementById('error-' + subpart);
+        if (!select) return;
+        var noError = select.querySelector('option[value="No Error"]');
+        if (marks === null || marks === 0) {
+            if (noError) noError.disabled = false;
+            select.value = 'No Error';
+            select.disabled = true;
+            flag(select, false);
+        } else {
+            select.disabled = false;
+            if (noError) noError.disabled = true;      // RP-V-009: can't be No Error
+            if (select.value === 'No Error' || select.value === '') select.value = '';
+            flag(select, select.value === '');          // needs a category
+        }
+    }
+
+    // Marks Lost is a whole number from 0 through Max Marks (BRD §7,
+    // RP-V-005/006/007). HTML min/max only flag validity, they don't stop
+    // typing, so sanitise here: strip anything but digits (no sign, no
+    // decimal) and clamp to the row's Max. The server re-checks on save and
+    // the live summary clamps too, so a value can never lie downstream.
+    window.rpMarkChanged = function (input) {
+        var max = parseInt(input.max, 10);
+        var digits = input.value.replace(/[^0-9]/g, '');
+        var marks = null;
+        if (digits !== '') {
+            marks = parseInt(digits, 10);
+            if (!isNaN(max) && marks > max) marks = max;   // clamp to Max Marks
+            digits = String(marks);
+        }
+        if (input.value !== digits) input.value = digits;  // only rewrite if needed
+        flag(input, false);
+        syncErrorType(input.dataset.subpart, marks);
+    };
+
+    // Clearing the red ring once a real error category is picked (RP-V-009).
+    window.rpErrorChanged = function (select) {
+        flag(select, false);
+    };
+
+    // Cancel (§10): leave without saving. Prefer the previous page; fall back
+    // to Overview when there is no history (e.g. the page was opened directly).
+    window.rpCancel = function () {
+        leaving = true;
+        if (window.history.length > 1) { window.history.back(); }
+        else { window.location.href = '/overview'; }
+    };
+
+    // On save, make every row post an explicit value. Blank Marks Lost means 0
+    // (RP-V-004 requires one per sub-part), and a disabled "No Error" select
+    // does not post at all, so re-enable them first. The service still
+    // validates authoritatively; this only stops well-formed input tripping
+    // RP-V-004/008 on the way out.
+    var form = document.getElementById('record-form');
+    var submitted = false;  // RP-V-011: one form submission, at most one attempt
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            // Drop a second submit (double-click, or Enter after a click) so an
+            // accidental duplicate never creates a second attempt (RP-V-011).
+            // This is the submit-guard the write-path service relies on for
+            // attempt-level idempotency; the service still de-dupes within a
+            // single payload.
+            if (submitted) { e.preventDefault(); return; }
+            submitted = true;
+            leaving = true;
+            marksInputs().forEach(function (input) {
+                if (input.value.trim() === '') input.value = '0';
+            });
+            Array.prototype.forEach.call(
+                document.querySelectorAll('#marks-form select[name^="error_type_"]'),
+                function (select) { select.disabled = false; }
+            );
+            // Visibly disable the primary action too. The native submit is
+            // already in flight, so this only blocks further clicks — and on a
+            // validation re-render the fresh page comes back enabled.
+            var button = form.querySelector('button[type="submit"]');
+            if (button) button.disabled = true;
+        });
+    }
+
+    // Real navigations: refresh, tab close, an external link. Exempt the save
+    // and Cancel, which are leaving on purpose.
+    window.addEventListener('beforeunload', function (e) {
+        if (leaving) return;
+        if (isDirty()) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    // In-app navigation and the Paper Details selects, which swap the table
+    // out. htmx:confirm fires before every htmx request; the live recalc is
+    // fired by the marks inputs themselves and discards nothing, so it passes
+    // through untouched. Everything else prompts once when the table is dirty.
+    document.body.addEventListener('htmx:confirm', function (e) {
+        if (!isDirty()) return;
+        var elt = e.detail.elt;
+        if (elt && elt.closest && elt.closest('#marks-form')) return;
+        e.preventDefault();
+        if (window.confirm('You have unsaved marks on this paper. Discard them and continue?')) {
+            e.detail.issueRequest(true);
+        }
+    });
+})();
+</script>
+{% endblock %}
