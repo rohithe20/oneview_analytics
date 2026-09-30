@@ -1,0 +1,113 @@
+{#
+  Paper Details dropdowns — the Level -> Paper Type -> Session -> Variant
+  cascade (BRD §6, §15).
+
+  Swap model. The three DEPENDENT dropdowns live in one `#paper-options`
+  element that every select in the chain replaces wholesale
+  (hx-target="#paper-options", hx-swap="outerHTML"). The server re-derives all
+  three from the database and drops whatever is no longer valid, so §6's
+  "changing Level clears incompatible Paper Type, Session and Variant
+  selections and reloads the valid choices" is one server-side rule rather
+  than three pieces of client state that can disagree.
+
+  `class="contents"` (display: contents) keeps that wrapper transparent to the
+  layout, so the five fields still render in §25.1's required order — Level,
+  Paper Type, Session, Variant, Date Completed — even though three of them are
+  wrapped in one swap target.
+
+  Level and Date Completed sit OUTSIDE the wrapper: Level because re-rendering
+  the control you just used steals its focus, Date Completed because §6 makes
+  it independent of the paper chain and a swap must never discard a date the
+  student has already entered.
+#}
+
+{% set field_label_class = "block text-xs font-semibold text-slate-600" %}
+{% set required_mark = '<span class="text-rose-500" aria-hidden="true">*</span>'|safe %}
+{% set select_class = "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400" %}
+
+{# Every select in the chain fires the same request at the same target. #}
+{% set cascade_attrs %}
+    hx-get="/record/paper-options"
+    hx-target="#paper-options"
+    hx-swap="outerHTML"
+    hx-include="#paper-details"
+    hx-trigger="change"
+{% endset %}
+
+
+{% macro level_field(selection) %}
+<div>
+    <label for="level" class="{{ field_label_class }}">Level {{ required_mark }}</label>
+    <select id="level" name="level" required class="{{ select_class }}" {{ cascade_attrs }}>
+        {% for value in levels %}
+        <option value="{{ value }}" {% if selection.level == value %}selected{% endif %}>{{ value }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+
+{% macro paper_options(selection) %}
+<div id="paper-options" class="contents">
+
+    {# --- Paper Type: filtered by Level (§6) ------------------------------ #}
+    <div>
+        <label for="component" class="{{ field_label_class }}">Paper Type {{ required_mark }}</label>
+        <select id="component" name="component" required
+                {% if not selection.paper_types %}disabled{% endif %}
+                class="{{ select_class }}" {{ cascade_attrs }}>
+            {% if selection.paper_types %}
+            <option value="">Select paper type</option>
+            {% for option in selection.paper_types %}
+            <option value="{{ option.component }}" {% if selection.component == option.component %}selected{% endif %}>
+                {{ option.label }}
+            </option>
+            {% endfor %}
+            {% else %}
+            {# §18 "No valid paper structure": say so, never invent an option. #}
+            <option value="">No papers for {{ selection.level }} Level</option>
+            {% endif %}
+        </select>
+    </div>
+
+    {# --- Session: sessions available for the selected paper (§6, §15) ---- #}
+    <div>
+        <label for="session" class="{{ field_label_class }}">Session {{ required_mark }}</label>
+        <select id="session" name="session" required
+                {% if not selection.sessions %}disabled{% endif %}
+                class="{{ select_class }}" {{ cascade_attrs }}>
+            {% if selection.sessions %}
+            <option value="">Select session</option>
+            {% for option in selection.sessions %}
+            <option value="{{ option.key }}" {% if selection.session_key == option.key %}selected{% endif %}>
+                {{ option.label }}
+            </option>
+            {% endfor %}
+            {% else %}
+            <option value="">Select paper type first</option>
+            {% endif %}
+        </select>
+    </div>
+
+    {# --- Variant: variants available for that paper/session (§6, §15) ---- #}
+    <div>
+        <label for="variant" class="{{ field_label_class }}">Variant {{ required_mark }}</label>
+        <select id="variant" name="variant" required
+                {% if not selection.variants %}disabled{% endif %}
+                class="{{ select_class }}" {{ cascade_attrs }}>
+            {% if selection.variants %}
+            <option value="">Select variant</option>
+            {% for value in selection.variants %}
+            <option value="{{ value }}" {% if selection.variant == value %}selected{% endif %}>{{ variant_code(selection.component, value) }}</option>
+            {% endfor %}
+            {% else %}
+            <option value="">Select session first</option>
+            {% endif %}
+        </select>
+    </div>
+
+    {# The resolved paper, for the question table to load against in the next
+       task. Empty until all four dropdowns resolve — never a client guess. #}
+    <input type="hidden" name="paper_id" value="{{ selection.paper.id if selection.paper else '' }}">
+</div>
+{% endmacro %}

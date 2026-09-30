@@ -4,8 +4,10 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.auth import LOGIN_URL, NotAuthenticatedError
 from app.core.config import settings
+from app.web.partials.record_paper import router as record_partials_router
 from app.web.routes.auth import router as auth_router
 from app.web.routes.overview import router as overview_router
+from app.web.routes.record import router as record_router
 
 app = FastAPI(title="OneView Learning Analytics")
 
@@ -23,6 +25,8 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(overview_router)
+app.include_router(record_router)
+app.include_router(record_partials_router)
 
 
 @app.exception_handler(NotAuthenticatedError)
