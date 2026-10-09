@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 import sys
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 from sqlalchemy import select, text
@@ -35,13 +36,17 @@ DEMO_MARKER_PREFIX = "[DEMO]"  # stored in attempt notes for identification
 # papers. "Definite & indefinite integration" appears in only one paper,
 # so it cannot clear the priority engine's observation gate now that
 # re-attempting a paper adds no observation.
+#
+# Exported (with MIN_WEAK_TOPIC_PAPERS) for tests/test_seed.py, which
+# guards the Pure weakness against a questions.csv edit that silently
+# drops it below the gate. It is the Pure plan's weak topic; Statistics
+# carries its own (see DEMO_PLANS).
 WEAK_TOPIC_NAME = "Integration as reverse of differentiation"
 
-# The demo account's scope (BRD §32). Every read below filters on both —
-# the seeder must not reach across levels or families any more than the
-# analytics layer does.
-DEMO_EXAM_LEVEL = "AS"
-DEMO_COMPONENT_FAMILY = "Pure"
+# Statistics' deliberate weak subtopic — a child of Probability, mapped in
+# enough recent papers to clear the observation gate within the demo subset.
+# Distinct from the Pure weakness so each family tells its own story.
+STATS_WEAK_TOPIC_NAME = "Conditional probability"
 
 # Every metric counts the most recent attempt at each DISTINCT paper
 # (planning-performance.md, PO decision 2026-09-05), so the demo needs enough
@@ -56,6 +61,15 @@ MIN_DISTINCT_PAPERS = 5
 # than assumed — a questions.csv edit that drops below it must fail loudly, not
 # quietly empty the Priority Areas card.
 MIN_WEAK_TOPIC_PAPERS = 3
+
+# Statistics has 23 seeded papers across 2023-2025, far more than a real
+# student would sit before a demo. The login student attempts a realistic
+# recent slice instead of the whole back-catalogue: the most recent
+# STATS_MAX_PAPERS papers sat no earlier than STATS_RECENT_YEAR_MIN. This
+# keeps the Statistics story plausible while still clearing MIN_DISTINCT_PAPERS
+# and the weak-area gate. Pure keeps its whole (smaller) scope — see DEMO_PLANS.
+STATS_RECENT_YEAR_MIN = 2024
+STATS_MAX_PAPERS = 9
 
 # The weakness must read as a real weak area, not as broken data: low but
 # clearly nonzero. These bound the weak subtopic's ability across the run
@@ -77,10 +91,58 @@ GENERAL_NOISE = 0.06
 BASE_ABILITY_START = 0.55
 BASE_ABILITY_END = 0.87
 
-# Reproducible demo data. Re-seeded at the start of every student's run
+# Reproducible demo data. Re-seeded at the start of every family's run
 # rather than once at import, which is what makes each demo account's marks
 # identical instead of each one continuing the previous student's stream.
 RANDOM_SEED = 42
+
+
+@dataclass(frozen=True)
+class FamilyPlan:
+    """One family's worth of synthetic attempts for a demo student.
+
+    A plan is pure configuration: it names the scope (BRD §32), the weak
+    subtopic to sink, and the ability ramp. The seeder below reads only its
+    own plan's scope — it must not reach across levels or families any more
+    than the analytics layer does.
+
+    recent_year_min / max_papers trim the full in-scope set to a realistic
+    recent slice. Left as None (Pure), the student attempts every paper in
+    scope; set (Statistics), the student attempts only the most recent
+    max_papers papers sat in or after recent_year_min.
+    """
+
+    exam_level: str
+    component_family: str
+    weak_topic_name: str
+    weak_ability_start: float = WEAK_ABILITY_START
+    weak_ability_end: float = WEAK_ABILITY_END
+    base_ability_start: float = BASE_ABILITY_START
+    base_ability_end: float = BASE_ABILITY_END
+    min_distinct_papers: int = MIN_DISTINCT_PAPERS
+    min_weak_topic_papers: int = MIN_WEAK_TOPIC_PAPERS
+    recent_year_min: int | None = None
+    max_papers: int | None = None
+
+
+# Both families the login student demos, so Overview and Topic Analysis have
+# a full, populated story on each side (all six components: prediction,
+# metrics, trend, priority, insight, recommendation). AS/A are never mixed and
+# Pure/Statistics never combined (BRD §32) — each plan is its own scope.
+DEMO_PLANS: list[FamilyPlan] = [
+    FamilyPlan(
+        exam_level="AS",
+        component_family="Pure",
+        weak_topic_name=WEAK_TOPIC_NAME,
+    ),
+    FamilyPlan(
+        exam_level="AS",
+        component_family="Statistics",
+        weak_topic_name=STATS_WEAK_TOPIC_NAME,
+        recent_year_min=STATS_RECENT_YEAR_MIN,
+        max_papers=STATS_MAX_PAPERS,
+    ),
+]
 
 
 def get_or_create_demo_student(db, username: str, display_name: str) -> Student:
@@ -118,6 +180,7 @@ def score_for_subpart(
     topic_name: str,
     base_ability: float,
     weak_ability: float,
+    weak_topic_name: str,
 ) -> int:
     """Return marks_scored for one sub-part.
 
@@ -125,7 +188,7 @@ def score_for_subpart(
     subtopic is scored against weak_ability instead, so it surfaces as a
     priority while staying well clear of zero.
     """
-    if topic_name == WEAK_TOPIC_NAME:
+    if topic_name == weak_topic_name:
         ability, noise = weak_ability, WEAK_NOISE
     else:
         ability, noise = base_ability, GENERAL_NOISE
@@ -140,12 +203,23 @@ def score_for_subpart(
 SESSION_ORDER = {"MARCH": 0, "MAY_JUNE": 1, "OCT_NOV": 2}
 
 
-def papers_in_scope(db, exam_level: str, component_family: str) -> list[Paper]:
-    """Every seeded paper for one (level, family) scope, oldest sitting first.
+def papers_in_scope(
+    db,
+    exam_level: str,
+    component_family: str,
+    *,
+    recent_year_min: int | None = None,
+    max_papers: int | None = None,
+) -> list[Paper]:
+    """Papers for one (level, family) scope, oldest sitting first.
 
     The family lookup goes through component_families — the same reference
     table planning.get_available_papers uses — never a hard-coded component
     list (CLAUDE.md, data-model.md).
+
+    recent_year_min drops anything sat before that year; max_papers then keeps
+    only the most recent that many (still oldest-first, so the ramp runs
+    forward through them). Both default to None, which returns the whole scope.
     """
     components = [
         row[0]
@@ -162,16 +236,20 @@ def papers_in_scope(db, exam_level: str, component_family: str) -> list[Paper]:
     papers = db.scalars(
         select(Paper).where(Paper.level == exam_level, Paper.component.in_(components))
     ).all()
-    return sorted(papers, key=lambda p: (p.year, SESSION_ORDER.get(p.session.name, 99), p.variant))
+    papers = sorted(
+        papers, key=lambda p: (p.year, SESSION_ORDER.get(p.session.name, 99), p.variant)
+    )
+
+    if recent_year_min is not None:
+        papers = [p for p in papers if p.year >= recent_year_min]
+    if max_papers is not None and len(papers) > max_papers:
+        # Keep the most recent max_papers; the slice preserves oldest-first order.
+        papers = papers[-max_papers:]
+    return papers
 
 
-def seed_demo_attempts(
-    db,
-    student: Student,
-    exam_level: str = DEMO_EXAM_LEVEL,
-    component_family: str = DEMO_COMPONENT_FAMILY,
-) -> tuple[int, int]:
-    """Exactly one completed attempt per DISTINCT paper in scope, improving.
+def seed_demo_attempts(db, student: Student, plan: FamilyPlan) -> tuple[int, int]:
+    """Exactly one completed attempt per DISTINCT paper in the plan, improving.
 
     One attempt per paper is now the only shape worth seeding: every metric
     reduces a paper's attempts to the most recent one, so a re-sit would add
@@ -183,29 +261,37 @@ def seed_demo_attempts(
     construction, returned as a pair because the caller reports both and the
     equality is the property worth showing.
     """
-    # Every demo account gets the same run of marks, not a continuation of the
-    # previous account's random stream.
+    # Every family gets the same run of marks, not a continuation of the
+    # previous family's or account's random stream.
     random.seed(RANDOM_SEED)
 
-    papers = papers_in_scope(db, exam_level, component_family)
+    papers = papers_in_scope(
+        db,
+        plan.exam_level,
+        plan.component_family,
+        recent_year_min=plan.recent_year_min,
+        max_papers=plan.max_papers,
+    )
     if not papers:
         raise SystemExit(
-            f"No {exam_level} {component_family} papers seeded. Run `python -m app.seed` first."
+            f"No {plan.exam_level} {plan.component_family} papers seeded. "
+            f"Run `python -m app.seed` first."
         )
-    if len(papers) < MIN_DISTINCT_PAPERS:
+    if len(papers) < plan.min_distinct_papers:
         raise SystemExit(
-            f"Only {len(papers)} distinct {exam_level} {component_family} paper(s) seeded; "
-            f"the demo needs at least {MIN_DISTINCT_PAPERS}. Add rows to "
-            f"app/seed/data/papers.csv (and matching questions.csv rows)."
+            f"Only {len(papers)} distinct {plan.exam_level} {plan.component_family} "
+            f"paper(s) in the demo slice; the demo needs at least "
+            f"{plan.min_distinct_papers}. Add rows to app/seed/data/papers.csv "
+            f"(and matching questions.csv rows), or widen the plan's recent slice."
         )
 
-    weak_papers = [p for p in papers if _carries_weak_subtopic(db, p)]
-    if len(weak_papers) < MIN_WEAK_TOPIC_PAPERS:
+    weak_papers = [p for p in papers if _carries_weak_subtopic(db, p, plan.weak_topic_name)]
+    if len(weak_papers) < plan.min_weak_topic_papers:
         raise SystemExit(
-            f"'{WEAK_TOPIC_NAME}' is mapped in only {len(weak_papers)} distinct "
-            f"{exam_level} {component_family} paper(s); the demo needs at least "
-            f"{MIN_WEAK_TOPIC_PAPERS} so it clears the priority engine's "
-            f"observation gate. Point WEAK_TOPIC_NAME at a subtopic "
+            f"'{plan.weak_topic_name}' is mapped in only {len(weak_papers)} distinct "
+            f"{plan.exam_level} {plan.component_family} paper(s) in the demo slice; the "
+            f"demo needs at least {plan.min_weak_topic_papers} so it clears the priority "
+            f"engine's observation gate. Point the plan's weak topic at a subtopic "
             f"app/seed/data/questions.csv maps more widely, or add rows there."
         )
 
@@ -215,20 +301,20 @@ def seed_demo_attempts(
     start = datetime(2026, 2, 1)
     last = len(papers) - 1
     for index, paper in enumerate(papers):
-        _record_attempt(db, student, paper, index, index / max(1, last), start)
+        _record_attempt(db, student, paper, index, index / max(1, last), start, plan)
 
     return len(papers), len(papers)
 
 
-def _carries_weak_subtopic(db, paper: Paper) -> bool:
-    """True when this paper has at least one sub-part on WEAK_TOPIC_NAME."""
+def _carries_weak_subtopic(db, paper: Paper, weak_topic_name: str) -> bool:
+    """True when this paper has at least one sub-part on weak_topic_name."""
     return (
         db.scalar(
             select(SubPart.id)
             .join(SubPart.question)
             .join(SubPart.topic)
             .where(SubPart.question.has(paper_id=paper.id))
-            .where(Topic.name == WEAK_TOPIC_NAME)
+            .where(Topic.name == weak_topic_name)
             .limit(1)
         )
         is not None
@@ -242,11 +328,16 @@ def _record_attempt(
     index: int,
     progress: float,
     start: datetime,
+    plan: FamilyPlan,
 ) -> None:
     """One completed, marked-up synthetic attempt at `progress` along the ramp."""
-    base_ability = BASE_ABILITY_START + (BASE_ABILITY_END - BASE_ABILITY_START) * progress
-    # The weak subtopic improves too, across WEAK_ABILITY_START..END.
-    weak_ability = WEAK_ABILITY_START + (WEAK_ABILITY_END - WEAK_ABILITY_START) * progress
+    base_ability = (
+        plan.base_ability_start + (plan.base_ability_end - plan.base_ability_start) * progress
+    )
+    # The weak subtopic improves too, across the plan's weak band.
+    weak_ability = (
+        plan.weak_ability_start + (plan.weak_ability_end - plan.weak_ability_start) * progress
+    )
 
     attempt = Attempt(
         student_id=student.id,
@@ -265,7 +356,7 @@ def _record_attempt(
 
     for sp in sub_parts:
         topic_name = sp.topic.name if sp.topic else ""
-        marks = score_for_subpart(sp, topic_name, base_ability, weak_ability)
+        marks = score_for_subpart(sp, topic_name, base_ability, weak_ability, plan.weak_topic_name)
         db.add(
             SubPartResult(
                 attempt_id=attempt.id,
@@ -286,20 +377,21 @@ def main() -> int:
                 print(f"Removed {removed} demo attempt(s) for '{username}' (id={student.id}).")
                 continue
 
-            created, distinct_papers = seed_demo_attempts(db, student)
-            print(
-                f"Removed {removed} old demo attempt(s), created {created} new one(s) "
-                f"across {distinct_papers} distinct paper(s) for student "
-                f"'{student.username}' (id={student.id}), scope "
-                f"{DEMO_EXAM_LEVEL} / {DEMO_COMPONENT_FAMILY}."
-            )
+            # One wipe covers the student's whole demo history; seed each
+            # family's plan in turn. The families are separate scopes and
+            # never mix (BRD §32).
+            print(f"Removed {removed} old demo attempt(s) for '{username}' (id={student.id}).")
+            for plan in DEMO_PLANS:
+                created, distinct_papers = seed_demo_attempts(db, student, plan)
+                print(
+                    f"  {plan.exam_level} / {plan.component_family}: created {created} "
+                    f"attempt(s) across {distinct_papers} distinct paper(s); "
+                    f"weak topic '{plan.weak_topic_name}'."
+                )
 
         # One transaction for every account: a failure part-way through leaves
         # no student holding a half-seeded run.
         db.commit()
-
-        if not wipe_only:
-            print(f"Deliberate weak topic: {WEAK_TOPIC_NAME}")
         return 0
 
 
