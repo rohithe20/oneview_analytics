@@ -1,4 +1,345 @@
 paper_ref,question_number,sub_part_label,max_marks,topic_name
+9709_12_FM_2023,1,,4,Discriminants
+9709_12_FM_2023,2,,4,Transformations of functions
+9709_12_FM_2023,3,,4,Derivative & gradient functions
+9709_12_FM_2023,4,a,2,Arithmetic & geometric progressions
+9709_12_FM_2023,4,b,3,Arithmetic & geometric progressions
+9709_12_FM_2023,5,,6,Circle equation
+9709_12_FM_2023,6,,6,Binomial expansion & coefficients
+9709_12_FM_2023,7,a,5,Trigonometric equations & identities
+9709_12_FM_2023,7,b,3,Trigonometric equations & identities
+9709_12_FM_2023,8,a,5,Arc length
+9709_12_FM_2023,8,b,3,Area of sector
+9709_12_FM_2023,9,a,1,Inverse functions & graphs
+9709_12_FM_2023,9,b,3,Inverse functions & graphs
+9709_12_FM_2023,9,c,5,Composite functions
+9709_12_FM_2023,10,a,1,Derivative & gradient functions
+9709_12_FM_2023,10,b,4,Integration as reverse of differentiation
+9709_12_FM_2023,10,c,3,Stationary points
+9709_12_FM_2023,10,d,2,Second derivative & stationary points
+9709_12_FM_2023,11,a,2,Straight-line equations
+9709_12_FM_2023,11,b,9,Integration with volume
+9709_11_MJ_2023,1,,3,Trigonometric equations & identities
+9709_11_MJ_2023,2,a,2,Binomial expansion & coefficients
+9709_11_MJ_2023,2,b,2,Binomial expansion & coefficients
+9709_11_MJ_2023,2,c,2,Binomial expansion & coefficients
+9709_11_MJ_2023,3,,4,Transformations of functions
+9709_11_MJ_2023,4,,4,Arc length
+9709_11_MJ_2023,5,,5,Tangents & normals
+9709_11_MJ_2023,6,a,3,Arithmetic & geometric progressions
+9709_11_MJ_2023,6,b,2,Arithmetic & geometric progressions
+9709_11_MJ_2023,7,a,2,Graphs of trigonometric functions
+9709_11_MJ_2023,7,b,2,Graphs of trigonometric functions
+9709_11_MJ_2023,7,c,1,Trigonometric equations & identities
+9709_11_MJ_2023,8,a,4,Composite functions
+9709_11_MJ_2023,8,b,1,Inverse functions & graphs
+9709_11_MJ_2023,8,c,3,Inverse functions & graphs
+9709_11_MJ_2023,9,a,3,Rates of change
+9709_11_MJ_2023,9,b,3,Rates of change
+9709_11_MJ_2023,10,a,5,Integration with volume
+9709_11_MJ_2023,10,b,6,Tangents & normals
+9709_11_MJ_2023,11,a,2,Derivative & gradient functions
+9709_11_MJ_2023,11,b,2,Second derivative & stationary points
+9709_11_MJ_2023,11,c,3,Integration as reverse of differentiation
+9709_11_MJ_2023,11,d,2,Stationary points
+9709_11_MJ_2023,12,a,1,Circle equation
+9709_11_MJ_2023,12,b,2,Parallel & perpendicular lines
+9709_11_MJ_2023,12,c,3,Circle equation
+9709_11_MJ_2023,12,d,3,Circle equation
+9709_12_MJ_2023,1,,3,Integration as reverse of differentiation
+9709_12_MJ_2023,2,,4,Binomial expansion & coefficients
+9709_12_MJ_2023,3,a,2,Completing the square
+9709_12_MJ_2023,3,b,1,Quadratic formula & inequalities
+9709_12_MJ_2023,4,,3,Quadratic formula & inequalities
+9709_12_MJ_2023,5,,4,Area under a curve & line
+9709_12_MJ_2023,6,a,2,Arc length
+9709_12_MJ_2023,6,b,4,Area of sector
+9709_12_MJ_2023,7,a(i),3,Trigonometric equations & identities
+9709_12_MJ_2023,7,a(ii),2,Trigonometric equations & identities
+9709_12_MJ_2023,7,b,3,Trigonometric equations & identities
+9709_12_MJ_2023,7,c,3,Trigonometric equations & identities
+9709_12_MJ_2023,8,a,2,Inverse functions & graphs
+9709_12_MJ_2023,8,b,2,Inverse functions & graphs
+9709_12_MJ_2023,8,c,2,Inverse functions & graphs
+9709_12_MJ_2023,8,d,6,Transformations of functions
+9709_12_MJ_2023,9,a,4,Arithmetic & geometric progressions
+9709_12_MJ_2023,9,b,4,Arithmetic & geometric progressions
+9709_12_MJ_2023,10,a,5,Circle equation
+9709_12_MJ_2023,10,b,4,Parallel & perpendicular lines
+9709_12_MJ_2023,10,c,4,Parallel & perpendicular lines
+9709_12_MJ_2023,11,a,2,Derivative & gradient functions
+9709_12_MJ_2023,11,b,2,Stationary points
+9709_12_MJ_2023,11,c,4,Tangents & normals
+9709_13_MJ_2023,1,,4,Transformations of functions
+9709_13_MJ_2023,2,,4,Quadratic formula & inequalities
+9709_13_MJ_2023,3,a,2,Binomial expansion & coefficients
+9709_13_MJ_2023,3,b,4,Binomial expansion & coefficients
+9709_13_MJ_2023,4,a,3,Trigonometric equations & identities
+9709_13_MJ_2023,4,b,4,Trigonometric equations & identities
+9709_13_MJ_2023,5,a,4,Circle equation
+9709_13_MJ_2023,5,b,3,Circle equation
+9709_13_MJ_2023,6,a,5,Area of sector
+9709_13_MJ_2023,6,b,2,Arc length
+9709_13_MJ_2023,7,a,1,Inverse functions & graphs
+9709_13_MJ_2023,7,b,4,Inverse functions & graphs
+9709_13_MJ_2023,7,c,3,Composite functions
+9709_13_MJ_2023,8,a,5,Arithmetic & geometric progressions
+9709_13_MJ_2023,8,b,5,Arithmetic & geometric progressions
+9709_13_MJ_2023,9,a,4,Integration as reverse of differentiation
+9709_13_MJ_2023,9,b,4,Quadratic curves
+9709_13_MJ_2023,9,c,2,Quadratic formula & inequalities
+9709_13_MJ_2023,10,a,4,Stationary points
+9709_13_MJ_2023,10,b,3,Tangents & normals
+9709_13_MJ_2023,10,c,5,Area under a curve & line
+9709_11_ON_2023,1,a,2,Binomial expansion & coefficients
+9709_11_ON_2023,1,b,2,Binomial expansion & coefficients
+9709_11_ON_2023,2,,4,Discriminants
+9709_11_ON_2023,3,,3,Rates of change
+9709_11_ON_2023,4,a,2,Transformations of functions
+9709_11_ON_2023,4,b,2,Transformations of functions
+9709_11_ON_2023,4,c,2,Transformations of functions
+9709_11_ON_2023,5,a,3,Trigonometric equations & identities
+9709_11_ON_2023,5,b,3,Trigonometric equations & identities
+9709_11_ON_2023,6,a,1,Radian conversion
+9709_11_ON_2023,6,b,1,Arc length
+9709_11_ON_2023,6,c,5,Area of sector
+9709_11_ON_2023,7,,7,Arithmetic & geometric progressions
+9709_11_ON_2023,8,a,4,Quadratic curves
+9709_11_ON_2023,8,b,5,Area under a curve & line
+9709_11_ON_2023,9,a,2,Completing the square
+9709_11_ON_2023,9,b,3,Composite functions
+9709_11_ON_2023,9,c,1,Composite functions
+9709_11_ON_2023,9,d,3,Inverse functions & graphs
+9709_11_ON_2023,10,a,3,Derivative & gradient functions
+9709_11_ON_2023,10,b,3,Integration as reverse of differentiation
+9709_11_ON_2023,10,c,3,Second derivative & stationary points
+9709_11_ON_2023,10,d,2,Tangents & normals
+9709_11_ON_2023,11,a,3,Straight-line equations
+9709_11_ON_2023,11,b,4,Circle equation
+9709_11_ON_2023,11,c,2,Parallel & perpendicular lines
+9709_12_ON_2023,1,,4,Binomial expansion & coefficients
+9709_12_ON_2023,2,,2,Inverse trigonometric functions
+9709_12_ON_2023,3,a,2,Tangents & normals
+9709_12_ON_2023,3,b,4,Integration as reverse of differentiation
+9709_12_ON_2023,4,a,2,Arc length
+9709_12_ON_2023,4,b,4,Area of sector
+9709_12_ON_2023,5,a,3,Arithmetic & geometric progressions
+9709_12_ON_2023,5,b,3,Arithmetic & geometric progressions
+9709_12_ON_2023,6,a,2,Completing the square
+9709_12_ON_2023,6,b,2,Transformations of functions
+9709_12_ON_2023,6,c,4,Transformations of functions
+9709_12_ON_2023,7,a,1,Trigonometric equations & identities
+9709_12_ON_2023,7,b,3,Trigonometric equations & identities
+9709_12_ON_2023,7,c,5,Trigonometric equations & identities
+9709_12_ON_2023,8,a,3,Inverse functions & graphs
+9709_12_ON_2023,8,b(i),1,Inverse functions & graphs
+9709_12_ON_2023,8,b(ii),1,Inverse functions & graphs
+9709_12_ON_2023,8,c,3,Composite functions
+9709_12_ON_2023,9,a,4,Quadratic curves
+9709_12_ON_2023,9,b,5,Area under a curve & line
+9709_12_ON_2023,10,a,6,Stationary points
+9709_12_ON_2023,10,b,1,Increasing & decreasing functions
+9709_12_ON_2023,11,a,4,Parallel & perpendicular lines
+9709_12_ON_2023,11,b,3,Circle equation
+9709_12_ON_2023,11,c,3,Parallel & perpendicular lines
+9709_13_ON_2023,1,,4,Integration as reverse of differentiation
+9709_13_ON_2023,2,a,2,Circle equation
+9709_13_ON_2023,2,b,2,Circle equation
+9709_13_ON_2023,3,a,3,Trigonometric equations & identities
+9709_13_ON_2023,3,b,4,Trigonometric equations & identities
+9709_13_ON_2023,4,a(i),1,Binomial expansion & coefficients
+9709_13_ON_2023,4,a(ii),2,Binomial expansion & coefficients
+9709_13_ON_2023,4,b,4,Binomial expansion & coefficients
+9709_13_ON_2023,5,a,3,Arithmetic & geometric progressions
+9709_13_ON_2023,5,b,4,Arithmetic & geometric progressions
+9709_13_ON_2023,6,,7,Discriminants
+9709_13_ON_2023,7,a,1,Inverse functions & graphs
+9709_13_ON_2023,7,b,4,Inverse functions & graphs
+9709_13_ON_2023,7,c,2,Composite functions
+9709_13_ON_2023,8,a,2,Graphs of trigonometric functions
+9709_13_ON_2023,8,b,3,Graphs of trigonometric functions
+9709_13_ON_2023,9,a,3,Tangents & normals
+9709_13_ON_2023,9,b,2,Derivative & gradient functions
+9709_13_ON_2023,9,c,3,Rates of change
+9709_13_ON_2023,10,a,1,Radian conversion
+9709_13_ON_2023,10,b,1,Arc length
+9709_13_ON_2023,10,c,7,Area of sector
+9709_13_ON_2023,11,a,4,Stationary points
+9709_13_ON_2023,11,b,6,Area under a curve & line
+9709_12_FM_2024,1,,3,Definite & indefinite integration
+9709_12_FM_2024,2,a,1,Graphs of trigonometric functions
+9709_12_FM_2024,2,b,3,Transformations of functions
+9709_12_FM_2024,3,,5,Integration as reverse of differentiation
+9709_12_FM_2024,4,a,3,Trigonometric equations & identities
+9709_12_FM_2024,4,b,3,Trigonometric equations & identities
+9709_12_FM_2024,5,,6,Tangents & normals
+9709_12_FM_2024,6,,5,Binomial expansion & coefficients
+9709_12_FM_2024,7,a,4,Discriminants
+9709_12_FM_2024,7,b,2,Simultaneous equations
+9709_12_FM_2024,8,a,4,Arithmetic & geometric progressions
+9709_12_FM_2024,8,b,4,Arithmetic & geometric progressions
+9709_12_FM_2024,9,a,4,Composite functions
+9709_12_FM_2024,9,b,2,Composite functions
+9709_12_FM_2024,9,c,3,Inverse functions & graphs
+9709_12_FM_2024,10,a,3,Straight-line equations
+9709_12_FM_2024,10,b,2,Circle equation
+9709_12_FM_2024,10,c,3,Radian conversion
+9709_12_FM_2024,10,d,4,Area of sector
+9709_12_FM_2024,11,a,4,Stationary points
+9709_12_FM_2024,11,b,7,Area under a curve & line
+9709_11_MJ_2024,1,a,2,Completing the square
+9709_11_MJ_2024,1,b,3,Quadratic formula & inequalities
+9709_11_MJ_2024,2,a,4,Transformations of functions
+9709_11_MJ_2024,2,b,2,Transformations of functions
+9709_11_MJ_2024,3,a,2,Binomial expansion & coefficients
+9709_11_MJ_2024,3,b,3,Binomial expansion & coefficients
+9709_11_MJ_2024,4,a,1,Derivative & gradient functions
+9709_11_MJ_2024,4,b,1,Derivative & gradient functions
+9709_11_MJ_2024,4,c,1,Derivative & gradient functions
+9709_11_MJ_2024,5,a,3,Trigonometric equations & identities
+9709_11_MJ_2024,5,b,3,Trigonometric equations & identities
+9709_11_MJ_2024,6,a,2,Inverse functions & graphs
+9709_11_MJ_2024,6,b,3,Inverse functions & graphs
+9709_11_MJ_2024,6,c,1,Inverse functions & graphs
+9709_11_MJ_2024,6,d,1,Inverse functions & graphs
+9709_11_MJ_2024,7,a,1,Radian conversion
+9709_11_MJ_2024,7,b,7,Area of sector
+9709_11_MJ_2024,8,a,4,Arithmetic & geometric progressions
+9709_11_MJ_2024,8,b,4,Arithmetic & geometric progressions
+9709_11_MJ_2024,9,,6,Integration with volume
+9709_11_MJ_2024,10,,8,Straight-line equations
+9709_11_MJ_2024,11,a,5,Increasing & decreasing functions
+9709_11_MJ_2024,11,b,8,Tangents & normals
+9709_12_MJ_2024,1,,3,Binomial expansion & coefficients
+9709_12_MJ_2024,2,,5,Transformations of functions
+9709_12_MJ_2024,3,a,3,Trigonometric equations & identities
+9709_12_MJ_2024,3,b,3,Trigonometric equations & identities
+9709_12_MJ_2024,4,a,1,Inverse functions & graphs
+9709_12_MJ_2024,4,b,2,Inverse functions & graphs
+9709_12_MJ_2024,4,c,4,Composite functions
+9709_12_MJ_2024,5,a,4,Arithmetic & geometric progressions
+9709_12_MJ_2024,5,b(i),2,Arithmetic & geometric progressions
+9709_12_MJ_2024,5,b(ii),3,Arithmetic & geometric progressions
+9709_12_MJ_2024,6,a,4,Derivative & gradient functions
+9709_12_MJ_2024,6,b,5,Area under a curve & line
+9709_12_MJ_2024,7,a,5,Circle equation
+9709_12_MJ_2024,7,b,3,Parallel & perpendicular lines
+9709_12_MJ_2024,8,a(i),2,Arc length
+9709_12_MJ_2024,8,a(ii),4,Area of sector
+9709_12_MJ_2024,8,b,4,Arc length
+9709_12_MJ_2024,9,a,4,Increasing & decreasing functions
+9709_12_MJ_2024,9,b,4,Integration as reverse of differentiation
+9709_12_MJ_2024,10,a,4,Rates of change
+9709_12_MJ_2024,10,b,6,Tangents & normals
+9709_13_MJ_2024,1,,4,Binomial expansion & coefficients
+9709_13_MJ_2024,2,a,3,Graphs of trigonometric functions
+9709_13_MJ_2024,2,b,2,Inverse trigonometric functions
+9709_13_MJ_2024,3,a,4,Arc length
+9709_13_MJ_2024,3,b,2,Area of sector
+9709_13_MJ_2024,4,a,3,Trigonometric equations & identities
+9709_13_MJ_2024,4,b,3,Trigonometric equations & identities
+9709_13_MJ_2024,5,a,3,Stationary points
+9709_13_MJ_2024,5,b,2,Second derivative & stationary points
+9709_13_MJ_2024,5,c,2,Increasing & decreasing functions
+9709_13_MJ_2024,6,a,4,Integration as reverse of differentiation
+9709_13_MJ_2024,6,b,3,Transformations of functions
+9709_13_MJ_2024,7,a,2,Arithmetic & geometric progressions
+9709_13_MJ_2024,7,b,5,Arithmetic & geometric progressions
+9709_13_MJ_2024,8,,8,Circle equation
+9709_13_MJ_2024,9,a,5,Tangents & normals
+9709_13_MJ_2024,9,b,3,Integration with volume
+9709_13_MJ_2024,10,a,3,Arithmetic & geometric progressions
+9709_13_MJ_2024,10,b,2,Arithmetic & geometric progressions
+9709_13_MJ_2024,10,c,3,Arithmetic & geometric progressions
+9709_13_MJ_2024,11,a,3,Inverse functions & graphs
+9709_13_MJ_2024,11,b,6,Inverse functions & graphs
+9709_11_ON_2024,1,,4,Binomial expansion & coefficients
+9709_11_ON_2024,2,,4,Stationary points
+9709_11_ON_2024,3,,5,Arc length
+9709_11_ON_2024,4,,5,Simultaneous equations
+9709_11_ON_2024,5,a,3,Derivative & gradient functions
+9709_11_ON_2024,5,b,4,Integration as reverse of differentiation
+9709_11_ON_2024,6,a,4,Circle equation
+9709_11_ON_2024,6,b,3,Length of line segment and midpoint
+9709_11_ON_2024,7,a,4,Tangents & normals
+9709_11_ON_2024,7,b,4,Area under a curve & line
+9709_11_ON_2024,8,a,3,Trigonometric equations & identities
+9709_11_ON_2024,8,b,5,Trigonometric equations & identities
+9709_11_ON_2024,9,a,4,Increasing & decreasing functions
+9709_11_ON_2024,9,b,4,Tangents & normals
+9709_11_ON_2024,10,a,3,Arithmetic & geometric progressions
+9709_11_ON_2024,10,b,5,Arithmetic & geometric progressions
+9709_11_ON_2024,11,a,3,Completing the square
+9709_11_ON_2024,11,b,2,Transformations of functions
+9709_11_ON_2024,11,c,2,Inverse functions & graphs
+9709_11_ON_2024,11,d,4,Inverse functions & graphs
+9709_12_ON_2024,1,a,3,Graphs of trigonometric functions
+9709_12_ON_2024,1,b(i),1,Graphs of trigonometric functions
+9709_12_ON_2024,1,b(ii),1,Graphs of trigonometric functions
+9709_12_ON_2024,2,a,2,Arithmetic & geometric progressions
+9709_12_ON_2024,2,b,3,Arithmetic & geometric progressions
+9709_12_ON_2024,3,a,3,Derivative & gradient functions
+9709_12_ON_2024,3,b,2,Derivative & gradient functions
+9709_12_ON_2024,4,a,2,Binomial expansion & coefficients
+9709_12_ON_2024,4,b,4,Binomial expansion & coefficients
+9709_12_ON_2024,5,a(i),1,Inverse functions & graphs
+9709_12_ON_2024,5,a(ii),2,Inverse functions & graphs
+9709_12_ON_2024,5,a(iii),4,Inverse functions & graphs
+9709_12_ON_2024,5,b,3,Composite functions
+9709_12_ON_2024,6,,6,Area of sector
+9709_12_ON_2024,7,a,3,Completing the square
+9709_12_ON_2024,7,b,5,Area under a curve & line
+9709_12_ON_2024,8,a,2,Circle equation
+9709_12_ON_2024,8,b(i),3,Parallel & perpendicular lines
+9709_12_ON_2024,8,b(ii),5,Circle equation
+9709_12_ON_2024,9,a,7,Simultaneous equations
+9709_12_ON_2024,9,b,3,Discriminants
+9709_12_ON_2024,10,a,3,Tangents & normals
+9709_12_ON_2024,10,b,4,Integration as reverse of differentiation
+9709_12_ON_2024,10,c,3,Increasing & decreasing functions
+9709_13_ON_2024,1,,3,Arithmetic & geometric progressions
+9709_13_ON_2024,2,,2,Trigonometric equations & identities
+9709_13_ON_2024,3,a,3,Binomial expansion & coefficients
+9709_13_ON_2024,3,b,3,Binomial expansion & coefficients
+9709_13_ON_2024,4,,4,Trigonometric equations & identities
+9709_13_ON_2024,5,a,6,Transformations of functions
+9709_13_ON_2024,5,b,2,Transformations of functions
+9709_13_ON_2024,6,,5,Arithmetic & geometric progressions
+9709_13_ON_2024,7,a,5,Area of sector
+9709_13_ON_2024,7,b,5,Area of sector
+9709_13_ON_2024,8,a,2,Completing the square
+9709_13_ON_2024,8,b,1,Inverse functions & graphs
+9709_13_ON_2024,8,c,3,Inverse functions & graphs
+9709_13_ON_2024,8,d,3,Inverse functions & graphs
+9709_13_ON_2024,9,a,3,Simultaneous equations
+9709_13_ON_2024,9,b,4,Area under a curve & line
+9709_13_ON_2024,10,a,4,Circle equation
+9709_13_ON_2024,10,b,5,Circle equation
+9709_13_ON_2024,11,a,2,Derivative & gradient functions
+9709_13_ON_2024,11,b,4,Second derivative & stationary points
+9709_13_ON_2024,11,c,6,Tangents & normals
+9709_12_FM_2025,1,,4,Discriminants
+9709_12_FM_2025,2,a,2,Derivative & gradient functions
+9709_12_FM_2025,2,b,3,Stationary points
+9709_12_FM_2025,3,a,4,Binomial expansion & coefficients
+9709_12_FM_2025,3,b,2,Binomial expansion & coefficients
+9709_12_FM_2025,4,a,3,Arc length
+9709_12_FM_2025,4,b,3,Area of sector
+9709_12_FM_2025,5,,6,Arithmetic & geometric progressions
+9709_12_FM_2025,6,a,1,Circle equation
+9709_12_FM_2025,6,b,3,Circle equation
+9709_12_FM_2025,6,c,2,Parallel & perpendicular lines
+9709_12_FM_2025,7,a,3,Trigonometric equations & identities
+9709_12_FM_2025,7,b,4,Trigonometric equations & identities
+9709_12_FM_2025,8,a,4,Arithmetic & geometric progressions
+9709_12_FM_2025,8,b,3,Arithmetic & geometric progressions
+9709_12_FM_2025,9,a,2,Second derivative & stationary points
+9709_12_FM_2025,9,b,7,Integration as reverse of differentiation
+9709_12_FM_2025,10,a,4,Area under a curve & line
+9709_12_FM_2025,10,b,5,Area under a curve & line
+9709_12_FM_2025,11,a,4,Composite functions
+9709_12_FM_2025,11,b,3,Transformations of functions
+9709_12_FM_2025,11,c,3,Transformations of functions
 9709_11_MJ_2025,1,,4,Trigonometric equations & identities
 9709_11_MJ_2025,2,a,2,Tangents & normals
 9709_11_MJ_2025,2,b,4,Integration as reverse of differentiation
@@ -11,7 +352,7 @@ paper_ref,question_number,sub_part_label,max_marks,topic_name
 9709_11_MJ_2025,6,a,4,Simultaneous equations
 9709_11_MJ_2025,6,b,5,Discriminants
 9709_11_MJ_2025,7,a,4,Rates of change
-9709_11_MJ_2025,7,b,5,Stationary points
+9709_11_MJ_2025,7,b,5,Second derivative & stationary points
 9709_11_MJ_2025,8,,8,Circle equation
 9709_11_MJ_2025,9,a,4,Area of sector
 9709_11_MJ_2025,9,b,4,Area of sector
@@ -183,26 +524,401 @@ paper_ref,question_number,sub_part_label,max_marks,topic_name
 9709_15_ON_2025,11,b,6,Area under a curve & line
 9709_15_ON_2025,11,c(i),1,Transformations of functions
 9709_15_ON_2025,11,c(ii),2,Transformations of functions
-9709_12_FM_2025,1,,4,Discriminants
-9709_12_FM_2025,2,a,2,Derivative & gradient functions
-9709_12_FM_2025,2,b,3,Stationary points
-9709_12_FM_2025,3,a,4,Binomial expansion & coefficients
-9709_12_FM_2025,3,b,2,Binomial expansion & coefficients
-9709_12_FM_2025,4,a,3,Arc length
-9709_12_FM_2025,4,b,3,Area of sector
-9709_12_FM_2025,5,,6,Arithmetic & geometric progressions
-9709_12_FM_2025,6,a,1,Circle equation
-9709_12_FM_2025,6,b,3,Circle equation
-9709_12_FM_2025,6,c,2,Parallel & perpendicular lines
-9709_12_FM_2025,7,a,3,Trigonometric equations & identities
-9709_12_FM_2025,7,b,4,Trigonometric equations & identities
-9709_12_FM_2025,8,a,4,Arithmetic & geometric progressions
-9709_12_FM_2025,8,b,3,Arithmetic & geometric progressions
-9709_12_FM_2025,9,a,2,Second derivative & stationary points
-9709_12_FM_2025,9,b,7,Integration as reverse of differentiation
-9709_12_FM_2025,10,a,4,Area under a curve & line
-9709_12_FM_2025,10,b,5,Area under a curve & line
-9709_12_FM_2025,11,a,4,Composite functions
-9709_12_FM_2025,11,b,3,Transformations of functions
-9709_12_FM_2025,11,c,3,Transformations of functions
-
+9709_52_FM_2023,1,a,3,Frequency graphs
+9709_52_FM_2023,1,b,2,Interquartile range and percentiles
+9709_52_FM_2023,1,c,3,Mean
+9709_52_FM_2023,2,a,3,Probability distributions
+9709_52_FM_2023,2,b,2,Probability distributions
+9709_52_FM_2023,2,c,2,Variance of a discrete random variable
+9709_52_FM_2023,3,a,3,Binomial distribution
+9709_52_FM_2023,3,b,3,Geometric distribution
+9709_52_FM_2023,3,c,3,Geometric distribution
+9709_52_FM_2023,4,,3,Conditional probability
+9709_52_FM_2023,5,,3,Independent events
+9709_52_FM_2023,6,a,2,Normal distribution
+9709_52_FM_2023,6,b,4,Normal distribution
+9709_52_FM_2023,6,c,5,Normal distribution
+9709_52_FM_2023,7,a,3,Permutations
+9709_52_FM_2023,7,b,3,Permutations
+9709_52_FM_2023,7,c,3,Combinations
+9709_51_MJ_2023,1,a,2,Variance and standard deviation
+9709_51_MJ_2023,1,b,2,Mean
+9709_51_MJ_2023,2,a,2,Combinations
+9709_51_MJ_2023,2,b,3,Combinations
+9709_51_MJ_2023,3,a,1,Permutations
+9709_51_MJ_2023,3,b,2,Permutations
+9709_51_MJ_2023,3,c,3,Permutations
+9709_51_MJ_2023,4,a,4,Normal distribution
+9709_51_MJ_2023,4,b,5,Normal distribution
+9709_51_MJ_2023,5,a,4,Histograms
+9709_51_MJ_2023,5,b,1,Median
+9709_51_MJ_2023,5,c,2,Interquartile range and percentiles
+9709_51_MJ_2023,6,a,2,Binomial distribution
+9709_51_MJ_2023,6,b,2,Binomial distribution
+9709_51_MJ_2023,6,c,2,Binomial distribution
+9709_51_MJ_2023,6,d,5,Approximation to the binomial distribution
+9709_51_MJ_2023,7,a,2,Geometric distribution
+9709_51_MJ_2023,7,b,3,Binomial distribution
+9709_51_MJ_2023,7,c,3,Probability distributions
+9709_52_MJ_2023,1,a,3,Probability distributions
+9709_52_MJ_2023,1,b,3,Variance of a discrete random variable
+9709_52_MJ_2023,2,a,1,Dependent events
+9709_52_MJ_2023,2,b,2,Dependent events
+9709_52_MJ_2023,2,c,3,Dependent events
+9709_52_MJ_2023,3,a,3,Stem-and-leaf diagrams
+9709_52_MJ_2023,3,b,3,Box-and-Whisker plot
+9709_52_MJ_2023,3,c,1,Median
+9709_52_MJ_2023,4,a,1,Geometric distribution
+9709_52_MJ_2023,4,b,2,Geometric distribution
+9709_52_MJ_2023,4,c,3,Conditional probability
+9709_52_MJ_2023,4,d,3,Binomial distribution
+9709_52_MJ_2023,5,a,4,Normal distribution
+9709_52_MJ_2023,5,b,3,Normal distribution
+9709_52_MJ_2023,5,c,5,Approximation to the binomial distribution
+9709_52_MJ_2023,6,a,4,Combinations
+9709_52_MJ_2023,6,b,2,Permutations
+9709_52_MJ_2023,6,c,4,Permutations
+9709_53_MJ_2023,1,a,1,Geometric distribution
+9709_53_MJ_2023,1,b,1,Geometric distribution
+9709_53_MJ_2023,1,c,2,Geometric distribution
+9709_53_MJ_2023,2,,5,Approximation to the binomial distribution
+9709_53_MJ_2023,3,a,4,Probability distributions
+9709_53_MJ_2023,3,b,1,Probability distributions
+9709_53_MJ_2023,3,c,2,Variance of a discrete random variable
+9709_53_MJ_2023,4,a,3,Interquartile range and percentiles
+9709_53_MJ_2023,4,b,2,Interquartile range and percentiles
+9709_53_MJ_2023,4,c,3,Mean
+9709_53_MJ_2023,5,a,4,Independent events
+9709_53_MJ_2023,5,b,3,Conditional probability
+9709_53_MJ_2023,6,a,3,Normal distribution
+9709_53_MJ_2023,6,b,3,Binomial distribution
+9709_53_MJ_2023,6,c,4,Normal distribution
+9709_53_MJ_2023,7,a,3,Permutations
+9709_53_MJ_2023,7,b,3,Permutations
+9709_53_MJ_2023,7,c,3,Combinations
+9709_51_ON_2023,1,a,2,Interquartile range and percentiles
+9709_51_ON_2023,1,b,2,Interquartile range and percentiles
+9709_51_ON_2023,2,a,2,Geometric distribution
+9709_51_ON_2023,2,b,2,Geometric distribution
+9709_51_ON_2023,2,c,3,Binomial distribution
+9709_51_ON_2023,3,a,3,Normal distribution
+9709_51_ON_2023,3,b,3,Normal distribution
+9709_51_ON_2023,3,c,5,Normal distribution
+9709_51_ON_2023,4,a,4,Histograms
+9709_51_ON_2023,4,b,5,Mean
+9709_51_ON_2023,5,a,1,Probability distributions
+9709_51_ON_2023,5,b,3,Probability distributions
+9709_51_ON_2023,5,c,5,Conditional probability
+9709_51_ON_2023,6,a,3,Combinations
+9709_51_ON_2023,6,b,3,Permutations
+9709_51_ON_2023,6,c,4,Permutations
+9709_52_ON_2023,1,a,3,Probability distributions
+9709_52_ON_2023,1,b,2,Variance of a discrete random variable
+9709_52_ON_2023,2,a,2,Geometric distribution
+9709_52_ON_2023,2,b,3,Binomial distribution
+9709_52_ON_2023,3,,5,Approximation to the binomial distribution
+9709_52_ON_2023,4,a,4,Stem-and-leaf diagrams
+9709_52_ON_2023,4,b,3,Interquartile range and percentiles
+9709_52_ON_2023,4,c,1,Median
+9709_52_ON_2023,5,a(i),2,Normal distribution
+9709_52_ON_2023,5,a(ii),3,Normal distribution
+9709_52_ON_2023,5,b,3,Normal distribution
+9709_52_ON_2023,6,a,3,Conditional probability
+9709_52_ON_2023,6,b,4,Dependent events
+9709_52_ON_2023,6,c,2,Conditional probability
+9709_52_ON_2023,7,a,3,Permutations
+9709_52_ON_2023,7,b,3,Permutations
+9709_52_ON_2023,7,c,4,Combinations
+9709_53_ON_2023,1,a,3,Probability distributions
+9709_53_ON_2023,1,b,3,Variance of a discrete random variable
+9709_53_ON_2023,2,a,3,Normal distribution
+9709_53_ON_2023,2,b,3,Normal distribution
+9709_53_ON_2023,3,a,3,Dependent events
+9709_53_ON_2023,3,b,4,Conditional probability
+9709_53_ON_2023,4,a,2,Frequency graphs
+9709_53_ON_2023,4,b,2,Interquartile range and percentiles
+9709_53_ON_2023,4,c,6,Mean
+9709_53_ON_2023,5,a(i),2,Geometric distribution
+9709_53_ON_2023,5,a(ii),1,Geometric distribution
+9709_53_ON_2023,5,b,3,Binomial distribution
+9709_53_ON_2023,5,c,5,Approximation to the binomial distribution
+9709_53_ON_2023,6,a(i),3,Permutations
+9709_53_ON_2023,6,a(ii),2,Permutations
+9709_53_ON_2023,6,b,5,Combinations
+9709_52_FM_2024,1,a,1,Dependent events
+9709_52_FM_2024,1,b,3,Conditional probability
+9709_52_FM_2024,2,a,3,Binomial distribution
+9709_52_FM_2024,2,b,2,Geometric distribution
+9709_52_FM_2024,2,c,3,Geometric distribution
+9709_52_FM_2024,3,a,4,Histograms
+9709_52_FM_2024,3,b,3,Mean
+9709_52_FM_2024,3,c,1,Interquartile range and percentiles
+9709_52_FM_2024,4,a,4,Normal distribution
+9709_52_FM_2024,4,b,3,Normal distribution
+9709_52_FM_2024,4,c,5,Approximation to the binomial distribution
+9709_52_FM_2024,5,a,2,Probability distributions
+9709_52_FM_2024,5,b,3,Probability distributions
+9709_52_FM_2024,5,c,3,Variance of a discrete random variable
+9709_52_FM_2024,6,a,4,Combinations
+9709_52_FM_2024,6,b,2,Permutations
+9709_52_FM_2024,6,c,4,Permutations
+9709_51_MJ_2024,1,a,2,Mean
+9709_51_MJ_2024,1,b,2,Variance and standard deviation
+9709_51_MJ_2024,2,a,4,Normal distribution
+9709_51_MJ_2024,2,b,3,Normal distribution
+9709_51_MJ_2024,3,a,4,Histograms
+9709_51_MJ_2024,3,b,2,Interquartile range and percentiles
+9709_51_MJ_2024,4,a,2,Geometric distribution
+9709_51_MJ_2024,4,b,1,Binomial distribution
+9709_51_MJ_2024,4,c,3,Binomial distribution
+9709_51_MJ_2024,5,a,3,Binomial distribution
+9709_51_MJ_2024,5,b,2,Binomial distribution
+9709_51_MJ_2024,5,c,5,Approximation to the binomial distribution
+9709_51_MJ_2024,6,a,4,Probability distributions
+9709_51_MJ_2024,6,b,3,Probability distributions
+9709_51_MJ_2024,7,a,1,Permutations
+9709_51_MJ_2024,7,b,4,Permutations
+9709_51_MJ_2024,7,c,5,Combinations
+9709_52_MJ_2024,1,a,1,Geometric distribution
+9709_52_MJ_2024,1,b,2,Geometric distribution
+9709_52_MJ_2024,1,c,2,Geometric distribution
+9709_52_MJ_2024,2,a,3,Dependent events
+9709_52_MJ_2024,2,b,2,Conditional probability
+9709_52_MJ_2024,3,a,3,Normal distribution
+9709_52_MJ_2024,3,b,3,Normal distribution
+9709_52_MJ_2024,4,a,3,Stem-and-leaf diagrams
+9709_52_MJ_2024,4,b,3,Box-and-Whisker plot
+9709_52_MJ_2024,4,c,1,Interquartile range and percentiles
+9709_52_MJ_2024,5,a,1,Probability distributions
+9709_52_MJ_2024,5,b,3,Probability distributions
+9709_52_MJ_2024,5,c,3,Variance of a discrete random variable
+9709_52_MJ_2024,6,a,5,Approximation to the binomial distribution
+9709_52_MJ_2024,6,b,3,Binomial distribution
+9709_52_MJ_2024,6,c,2,Mutually exclusive events
+9709_52_MJ_2024,7,a,1,Permutations
+9709_52_MJ_2024,7,b,4,Permutations
+9709_52_MJ_2024,7,c,5,Permutations
+9709_53_MJ_2024,1,a,3,Probability distributions
+9709_53_MJ_2024,1,b,3,Variance of a discrete random variable
+9709_53_MJ_2024,1,c,2,Conditional probability
+9709_53_MJ_2024,2,a,3,Normal distribution
+9709_53_MJ_2024,2,b,5,Normal distribution
+9709_53_MJ_2024,3,a,4,Dependent events
+9709_53_MJ_2024,3,b,3,Dependent events
+9709_53_MJ_2024,4,a,4,Stem-and-leaf diagrams
+9709_53_MJ_2024,4,b,3,Box-and-Whisker plot
+9709_53_MJ_2024,4,c,1,Interquartile range and percentiles
+9709_53_MJ_2024,5,a,1,Geometric distribution
+9709_53_MJ_2024,5,b,2,Geometric distribution
+9709_53_MJ_2024,5,c,3,Binomial distribution
+9709_53_MJ_2024,5,d,5,Approximation to the binomial distribution
+9709_53_MJ_2024,6,a,1,Permutations
+9709_53_MJ_2024,6,b,3,Permutations
+9709_53_MJ_2024,6,c,4,Permutations
+9709_51_ON_2024,1,a,2,Geometric distribution
+9709_51_ON_2024,1,b,2,Geometric distribution
+9709_51_ON_2024,2,a,3,Probability distributions
+9709_51_ON_2024,2,b,3,Variance of a discrete random variable
+9709_51_ON_2024,3,a,2,Frequency graphs
+9709_51_ON_2024,3,b,3,Interquartile range and percentiles
+9709_51_ON_2024,3,c,3,Mean
+9709_51_ON_2024,4,a,3,Dependent events
+9709_51_ON_2024,4,b,3,Conditional probability
+9709_51_ON_2024,5,a,4,Normal distribution
+9709_51_ON_2024,5,b,5,Approximation to the binomial distribution
+9709_51_ON_2024,6,a,5,Normal distribution
+9709_51_ON_2024,6,b,3,Binomial distribution
+9709_51_ON_2024,7,a,2,Permutations
+9709_51_ON_2024,7,b,3,Permutations
+9709_51_ON_2024,7,c,4,Combinations
+9709_52_ON_2024,1,a,1,Conditional probability
+9709_52_ON_2024,1,b,1,Conditional probability
+9709_52_ON_2024,1,c,1,Independent events
+9709_52_ON_2024,1,d,3,Binomial distribution
+9709_52_ON_2024,2,a,1,Permutations
+9709_52_ON_2024,2,b,3,Permutations
+9709_52_ON_2024,3,a,3,Probability distributions
+9709_52_ON_2024,3,b,3,Variance of a discrete random variable
+9709_52_ON_2024,4,a,4,Normal distribution
+9709_52_ON_2024,4,b,3,Normal distribution
+9709_52_ON_2024,5,a,2,Combinations
+9709_52_ON_2024,5,b,4,Combinations
+9709_52_ON_2024,6,a,4,Stem-and-leaf diagrams
+9709_52_ON_2024,6,b,3,Interquartile range and percentiles
+9709_52_ON_2024,6,c,3,Variance and standard deviation
+9709_52_ON_2024,7,a,1,Geometric distribution
+9709_52_ON_2024,7,b,2,Geometric distribution
+9709_52_ON_2024,7,c,3,Binomial distribution
+9709_52_ON_2024,7,d,5,Approximation to the binomial distribution
+9709_53_ON_2024,1,a,2,Probability distributions
+9709_53_ON_2024,1,b,5,Approximation to the binomial distribution
+9709_53_ON_2024,2,a,3,Probability distributions
+9709_53_ON_2024,2,b,1,Mean
+9709_53_ON_2024,3,a,3,Normal distribution
+9709_53_ON_2024,3,b,4,Normal distribution
+9709_53_ON_2024,4,a,4,Frequency graphs
+9709_53_ON_2024,4,b,2,Interquartile range and percentiles
+9709_53_ON_2024,4,c,5,Variance and standard deviation
+9709_53_ON_2024,5,a,3,Binomial distribution
+9709_53_ON_2024,5,b,2,Geometric distribution
+9709_53_ON_2024,5,c,5,Conditional probability
+9709_53_ON_2024,6,a,1,Permutations
+9709_53_ON_2024,6,b,3,Permutations
+9709_53_ON_2024,6,c,4,Permutations
+9709_53_ON_2024,6,d,3,Combinations
+9709_52_FM_2025,1,a,1,Probability distributions
+9709_52_FM_2025,1,b,3,Probability distributions
+9709_52_FM_2025,1,c,2,Variance of a discrete random variable
+9709_52_FM_2025,2,a,1,Independent events
+9709_52_FM_2025,2,b,3,Binomial distribution
+9709_52_FM_2025,2,c,5,Approximation to the binomial distribution
+9709_52_FM_2025,3,a,4,Frequency graphs
+9709_52_FM_2025,3,b,2,Interquartile range and percentiles
+9709_52_FM_2025,3,c,3,Mean
+9709_52_FM_2025,4,a,3,Combinations
+9709_52_FM_2025,4,b,4,Combinations
+9709_52_FM_2025,5,a,3,Normal distribution
+9709_52_FM_2025,5,b,3,Normal distribution
+9709_52_FM_2025,5,c,1,Geometric distribution
+9709_52_FM_2025,5,d,2,Geometric distribution
+9709_52_FM_2025,6,a,1,Permutations
+9709_52_FM_2025,6,b,2,Permutations
+9709_52_FM_2025,6,c,3,Permutations
+9709_52_FM_2025,6,d,4,Combinations
+9709_51_MJ_2025,1,a,1,Normal distribution
+9709_51_MJ_2025,1,b,2,Normal distribution
+9709_51_MJ_2025,2,a,3,Permutations
+9709_51_MJ_2025,2,b,2,Geometric distribution
+9709_51_MJ_2025,2,c,2,Binomial distribution
+9709_51_MJ_2025,3,a,4,Stem-and-leaf diagrams
+9709_51_MJ_2025,3,b,2,Interquartile range and percentiles
+9709_51_MJ_2025,3,c,1,Mean
+9709_51_MJ_2025,3,d,5,Variance and standard deviation
+9709_51_MJ_2025,4,a,4,Normal distribution
+9709_51_MJ_2025,4,b,3,Binomial distribution
+9709_51_MJ_2025,4,c,5,Approximation to the binomial distribution
+9709_51_MJ_2025,5,a,4,Combinations
+9709_51_MJ_2025,5,b,3,Combinations
+9709_51_MJ_2025,6,a,2,Probability distributions
+9709_51_MJ_2025,6,b,4,Probability distributions
+9709_51_MJ_2025,6,c,3,Conditional probability
+9709_52_MJ_2025,1,,3,Probability distributions
+9709_52_MJ_2025,2,,5,Approximation to the binomial distribution
+9709_52_MJ_2025,3,a,2,Dependent events
+9709_52_MJ_2025,3,b,3,Conditional probability
+9709_52_MJ_2025,4,a,1,Independent events
+9709_52_MJ_2025,4,b,2,Geometric distribution
+9709_52_MJ_2025,4,c,3,Geometric distribution
+9709_52_MJ_2025,5,a,2,Frequency graphs
+9709_52_MJ_2025,5,b,2,Frequency graphs
+9709_52_MJ_2025,5,c,6,Mean
+9709_52_MJ_2025,6,a,3,Permutations
+9709_52_MJ_2025,6,b,3,Permutations
+9709_52_MJ_2025,6,c,3,Combinations
+9709_52_MJ_2025,7,a,4,Normal distribution
+9709_52_MJ_2025,7,b,3,Normal distribution
+9709_52_MJ_2025,7,c,5,Binomial distribution
+9709_53_MJ_2025,1,a,2,Mean
+9709_53_MJ_2025,1,b,2,Variance and standard deviation
+9709_53_MJ_2025,2,a,2,Binomial distribution
+9709_53_MJ_2025,2,b,3,Binomial distribution
+9709_53_MJ_2025,3,a,1,Geometric distribution
+9709_53_MJ_2025,3,b,2,Geometric distribution
+9709_53_MJ_2025,3,c,3,Geometric distribution
+9709_53_MJ_2025,4,a,1,Interquartile range and percentiles
+9709_53_MJ_2025,4,b,4,Box-and-Whisker plot
+9709_53_MJ_2025,5,a,3,Dependent events
+9709_53_MJ_2025,5,b,2,Dependent events
+9709_53_MJ_2025,5,c,3,Conditional probability
+9709_53_MJ_2025,6,a,2,Normal distribution
+9709_53_MJ_2025,6,b,3,Normal distribution
+9709_53_MJ_2025,6,c,5,Normal distribution
+9709_53_MJ_2025,7,a,3,Permutations
+9709_53_MJ_2025,7,b,3,Permutations
+9709_53_MJ_2025,7,c,2,Combinations
+9709_53_MJ_2025,7,d,4,Combinations
+9709_55_MJ_2025,1,a,2,Probability distributions
+9709_55_MJ_2025,1,b,4,Variance of a discrete random variable
+9709_55_MJ_2025,2,a,3,Normal distribution
+9709_55_MJ_2025,2,b,4,Normal distribution
+9709_55_MJ_2025,3,a,3,Approximation to the binomial distribution
+9709_55_MJ_2025,3,b,5,Binomial distribution
+9709_55_MJ_2025,4,a,2,Dependent events
+9709_55_MJ_2025,4,b,2,Dependent events
+9709_55_MJ_2025,4,c,3,Conditional probability
+9709_55_MJ_2025,4,d,2,Independent events
+9709_55_MJ_2025,5,a,4,Stem-and-leaf diagrams
+9709_55_MJ_2025,5,b,4,Box-and-Whisker plot
+9709_55_MJ_2025,5,c,2,Interquartile range and percentiles
+9709_55_MJ_2025,6,a,3,Combinations
+9709_55_MJ_2025,6,b,4,Combinations
+9709_55_MJ_2025,6,c,3,Combinations
+9709_51_ON_2025,1,a,3,Probability distributions
+9709_51_ON_2025,1,b,1,Mean
+9709_51_ON_2025,1,c,2,Discrete random variables
+9709_51_ON_2025,2,a,1,Geometric distribution
+9709_51_ON_2025,2,b,3,Geometric distribution
+9709_51_ON_2025,3,a,3,Interquartile range and percentiles
+9709_51_ON_2025,3,b,5,Variance and standard deviation
+9709_51_ON_2025,4,a,3,Dependent events
+9709_51_ON_2025,4,b,2,Dependent events
+9709_51_ON_2025,5,a,3,Binomial distribution
+9709_51_ON_2025,5,b,5,Approximation to the binomial distribution
+9709_51_ON_2025,6,a,4,Normal distribution
+9709_51_ON_2025,6,b,4,Normal distribution
+9709_51_ON_2025,7,a,1,Permutations
+9709_51_ON_2025,7,b,3,Permutations
+9709_51_ON_2025,7,c,3,Permutations
+9709_51_ON_2025,7,d,3,Combinations
+9709_52_ON_2025,1,a,1,Geometric distribution
+9709_52_ON_2025,1,b,2,Geometric distribution
+9709_52_ON_2025,2,a,4,Probability distributions
+9709_52_ON_2025,2,b,3,Variance of a discrete random variable
+9709_52_ON_2025,3,a,4,Normal distribution
+9709_52_ON_2025,3,b,3,Normal distribution
+9709_52_ON_2025,4,a,4,Independent events
+9709_52_ON_2025,4,b,3,Independent events
+9709_52_ON_2025,5,a,4,Histograms
+9709_52_ON_2025,5,b,3,Mean
+9709_52_ON_2025,6,a,1,Binomial distribution
+9709_52_ON_2025,6,b,3,Binomial distribution
+9709_52_ON_2025,6,c,5,Approximation to the binomial distribution
+9709_52_ON_2025,7,a,1,Combinations
+9709_52_ON_2025,7,b,2,Combinations
+9709_52_ON_2025,7,c,3,Combinations
+9709_52_ON_2025,7,d,4,Combinations
+9709_53_ON_2025,1,a,1,Binomial distribution
+9709_53_ON_2025,1,b,3,Binomial distribution
+9709_53_ON_2025,2,,4,Combinations
+9709_53_ON_2025,3,a,3,Permutations
+9709_53_ON_2025,3,b,3,Permutations
+9709_53_ON_2025,4,a,3,Probability distributions
+9709_53_ON_2025,4,b,3,Variance of a discrete random variable
+9709_53_ON_2025,4,c,2,Geometric distribution
+9709_53_ON_2025,5,a,3,Dependent events
+9709_53_ON_2025,5,b,3,Dependent events
+9709_53_ON_2025,5,c,2,Conditional probability
+9709_53_ON_2025,6,a,4,Stem-and-leaf diagrams
+9709_53_ON_2025,6,b,2,Interquartile range and percentiles
+9709_53_ON_2025,6,c,3,Box-and-Whisker plot
+9709_53_ON_2025,6,d,1,Interquartile range and percentiles
+9709_53_ON_2025,7,a,3,Normal distribution
+9709_53_ON_2025,7,b,3,Normal distribution
+9709_53_ON_2025,7,c,4,Normal distribution
+9709_55_ON_2025,1,a,1,Geometric distribution
+9709_55_ON_2025,1,b,2,Geometric distribution
+9709_55_ON_2025,2,a,4,Variance of a discrete random variable
+9709_55_ON_2025,2,b,3,Binomial distribution
+9709_55_ON_2025,3,a,2,Dependent events
+9709_55_ON_2025,3,b,2,Dependent events
+9709_55_ON_2025,3,c,4,Conditional probability
+9709_55_ON_2025,4,a,4,Stem-and-leaf diagrams
+9709_55_ON_2025,4,b,3,Interquartile range and percentiles
+9709_55_ON_2025,4,c,3,Interquartile range and percentiles
+9709_55_ON_2025,4,d,1,Interquartile range and percentiles
+9709_55_ON_2025,5,a,4,Combinations
+9709_55_ON_2025,5,b,3,Permutations
+9709_55_ON_2025,5,c,3,Permutations
+9709_55_ON_2025,6,a,3,Normal distribution
+9709_55_ON_2025,6,b,3,Normal distribution
+9709_55_ON_2025,6,c,5,Approximation to the binomial distribution

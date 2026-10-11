@@ -1,0 +1,176 @@
+{# Topic Analysis workspace (topic-analysis-ui.md §6, §7, §8).
+
+   The HTMX-swappable region: the Topic Performance table (left) and Subtopic
+   Analysis table (right) side by side, with the question-level lost-mark panel
+   below. Rendered on first load by topic-analysis.html and re-rendered on its
+   own by GET /topic-analysis/workspace when a row is clicked. Summary tiles and
+   the family header live OUTSIDE this region — a topic/subtopic selection never
+   changes them, only the scope (level/family) does, which is a full reload. #}
+
+{% macro status_badge(status) %}
+<span class="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-semibold {{ status_classes.get(status, status_classes['Insufficient data']) }}">
+    {% if status not in ('Insufficient data',) %}<span class="h-1.5 w-1.5 rounded-full bg-current"></span>{% endif %}{{ status }}
+</span>
+{% endmacro %}
+
+{% macro perf_table_row(row, id_key, name_key, is_selected, hx_url) %}
+{# One row of either table. Whole row is the click target (§6/§7 row-selection
+   drill-down). marks_lost carries the rose emphasis; average uses the shared
+   performance band so the two screens read identically. #}
+<tr hx-get="{{ hx_url }}" hx-target="#ta-workspace" hx-swap="innerHTML"
+    hx-push-url="{{ hx_url|replace('/topic-analysis/workspace', '/topic-analysis') }}"
+    class="cursor-pointer border-t border-slate-100 transition-colors
+           {% if is_selected %}bg-indigo-50/70{% else %}hover:bg-slate-50{% endif %}">
+    <td class="px-3 py-2.5">
+        <div class="flex items-center gap-2">
+            {% if is_selected %}<span class="h-4 w-1 shrink-0 rounded-full bg-indigo-500"></span>{% endif %}
+            <span class="text-sm font-medium text-slate-900">{{ row[name_key] }}</span>
+        </div>
+    </td>
+    <td class="px-3 py-2.5 text-right text-sm text-slate-500 tabular-nums">{{ row.questions }}</td>
+    <td class="px-3 py-2.5 text-right">
+        {% if row.questions %}
+        <span class="text-sm font-semibold text-{{ row.average_score|band }}-600 tabular-nums">{{ row.average_score|pct }}</span>
+        {% else %}
+        <span class="text-sm text-slate-300">&mdash;</span>
+        {% endif %}
+    </td>
+    <td class="px-3 py-2.5 text-right">
+        {% if row.marks_lost %}
+        <span class="text-sm font-semibold text-rose-600 tabular-nums">{{ row.marks_lost|marks }}</span>
+        {% else %}
+        <span class="text-sm text-slate-300 tabular-nums">0</span>
+        {% endif %}
+    </td>
+    <td class="px-3 py-2.5">{{ status_badge(row.status) }}</td>
+</tr>
+{% endmacro %}
+
+{% macro render_workspace(view, exam_level, component_family) %}
+{% set scope = '?level=' ~ exam_level ~ '&family=' ~ component_family %}
+{% set selected_topic = (view.topics | selectattr('topic_id', 'equalto', view.selected_topic_id) | list | first) %}
+
+<div class="grid grid-cols-2 gap-5 items-start">
+
+    {# --- Topic Performance (§6) --- #}
+    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="border-b border-slate-100 px-5 py-3.5">
+            <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Topic Performance</h3>
+        </div>
+        <table class="w-full">
+            <thead>
+                <tr class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    <th class="px-3 py-2 text-left">Topic</th>
+                    <th class="px-3 py-2 text-right">Questions</th>
+                    <th class="px-3 py-2 text-right">Average Score</th>
+                    <th class="px-3 py-2 text-right">Marks Lost</th>
+                    <th class="px-3 py-2 text-left">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in view.topics %}
+                {{ perf_table_row(
+                    t, 'topic_id', 'topic_name',
+                    t.topic_id == view.selected_topic_id,
+                    '/topic-analysis/workspace' ~ scope ~ '&topic_id=' ~ t.topic_id) }}
+                {% else %}
+                <tr><td colspan="5" class="px-3 py-8 text-center text-sm text-slate-400">No topics in this scope yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    {# --- Subtopic Analysis (§7) — heading reflects the selected topic --- #}
+    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="border-b border-slate-100 px-5 py-3.5">
+            <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">
+                {% if selected_topic %}{{ selected_topic.topic_name }} &mdash; {% endif %}Subtopic Analysis
+            </h3>
+        </div>
+        <table class="w-full">
+            <thead>
+                <tr class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    <th class="px-3 py-2 text-left">Subtopic</th>
+                    <th class="px-3 py-2 text-right">Questions</th>
+                    <th class="px-3 py-2 text-right">Average Score</th>
+                    <th class="px-3 py-2 text-right">Marks Lost</th>
+                    <th class="px-3 py-2 text-left">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in view.subtopics %}
+                {{ perf_table_row(
+                    s, 'subtopic_id', 'subtopic_name',
+                    s.subtopic_id == view.selected_subtopic_id,
+                    '/topic-analysis/workspace' ~ scope ~ '&topic_id=' ~ view.selected_topic_id ~ '&subtopic_id=' ~ s.subtopic_id) }}
+                {% else %}
+                <tr><td colspan="5" class="px-3 py-8 text-center text-sm text-slate-400">This topic has no subtopics in the taxonomy.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+</div>
+
+{# --- Question-level lost-mark panel (§8, FSD §9) --- #}
+{% set selected_subtopic = (view.subtopics | selectattr('subtopic_id', 'equalto', view.selected_subtopic_id) | list | first) %}
+<section class="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div class="border-b border-slate-100 px-5 py-3.5">
+        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">
+            Questions with Marks Lost{% if selected_subtopic %} &mdash; {{ selected_subtopic.subtopic_name }}{% endif %}
+        </h3>
+    </div>
+
+    {% if view.lost_mark_questions %}
+    {% set max_lost = (view.lost_mark_questions | map(attribute='marks_lost') | max) %}
+    <table class="w-full">
+        <thead>
+            {# NO dropdown / sort indicator beside Marks Lost (§13). Columns in
+               the fixed §8 order: Year | Variant | Question | Your Score | Max
+               Marks | Marks Lost. #}
+            <tr class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                <th class="px-4 py-2 text-left">Year</th>
+                <th class="px-4 py-2 text-left">Variant</th>
+                <th class="px-4 py-2 text-left">Question</th>
+                <th class="px-4 py-2 text-right">Your Score</th>
+                <th class="px-4 py-2 text-right">Max Marks</th>
+                <th class="px-4 py-2 text-right">Marks Lost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for q in view.lost_mark_questions %}
+            <tr class="border-t border-slate-100">
+                <td class="px-4 py-2.5 text-sm text-slate-700 tabular-nums">{{ q.year }}</td>
+                {# Variant as the combined numeric code (11/12/13) — NO prefix (§13). #}
+                <td class="px-4 py-2.5 text-sm text-slate-700 tabular-nums">{{ q.variant_display }}</td>
+                <td class="px-4 py-2.5 text-sm font-medium text-slate-900">{{ q.question }}</td>
+                <td class="px-4 py-2.5 text-right text-sm text-slate-700 tabular-nums">{{ q.your_score }}</td>
+                <td class="px-4 py-2.5 text-right text-sm text-slate-500 tabular-nums">{{ q.max_marks }}</td>
+                <td class="px-4 py-2.5 text-right">
+                    {# Larger losses get emphasis (§8): a proportional rose bar +
+                       heavier weight, consistent with the status colour scale. #}
+                    <div class="flex items-center justify-end gap-2">
+                        <span class="h-1.5 rounded-full bg-rose-500" style="width: {{ (28 * q.marks_lost / max_lost)|round|int }}px"></span>
+                        <span class="w-6 text-sm font-bold text-rose-600 tabular-nums">{{ q.marks_lost }}</span>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="px-5 py-10 text-center">
+        <p class="text-sm text-slate-400">No marks lost in the available records for this subtopic.</p>
+    </div>
+    {% endif %}
+</section>
+
+{# Review tip (§5 point 6) — points at the original practice papers (§13). #}
+<p class="mt-4 flex items-center gap-2 text-xs text-slate-400">
+    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+         stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+    </svg>
+    Look up these questions in your original practice papers to review and practise them again.
+</p>
+{% endmacro %}

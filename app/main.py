@@ -8,6 +8,7 @@ from app.web.partials.record_paper import router as record_partials_router
 from app.web.routes.auth import router as auth_router
 from app.web.routes.overview import router as overview_router
 from app.web.routes.record import router as record_router
+from app.web.routes.topic_analysis import router as topic_analysis_router
 
 app = FastAPI(title="OneView Learning Analytics")
 
@@ -27,6 +28,7 @@ app.include_router(auth_router)
 app.include_router(overview_router)
 app.include_router(record_router)
 app.include_router(record_partials_router)
+app.include_router(topic_analysis_router)
 
 
 @app.exception_handler(NotAuthenticatedError)

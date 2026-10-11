@@ -93,12 +93,12 @@
             <div class="flex items-center gap-3">
                 <span class="text-sm font-medium text-slate-500">Exam Level:</span>
                 <div class="inline-flex rounded-lg bg-slate-100 p-1">
-                    <a href="/overview?level=AS"
+                    <a href="{{ level_as_href|default('/overview?level=AS') }}"
                        class="px-4 py-1.5 text-sm font-semibold rounded-md
                               {% if exam_level == 'AS' %}bg-indigo-600 text-white shadow-sm{% else %}text-slate-500 hover:text-slate-700{% endif %}">
                         AS Level
                     </a>
-                    <a href="/overview?level=A"
+                    <a href="{{ level_a_href|default('/overview?level=A') }}"
                        class="px-4 py-1.5 text-sm font-semibold rounded-md
                               {% if exam_level == 'A' %}bg-indigo-600 text-white shadow-sm{% else %}text-slate-500 hover:text-slate-700{% endif %}">
                         A Level

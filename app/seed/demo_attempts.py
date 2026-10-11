@@ -71,6 +71,15 @@ MIN_WEAK_TOPIC_PAPERS = 3
 STATS_RECENT_YEAR_MIN = 2024
 STATS_MAX_PAPERS = 9
 
+# Pure has 23 seeded papers across 2023-2025 — attempting every one is more than
+# a real student sits and makes the Overview read as a full back-catalogue rather
+# than a term's work. The login student attempts the most recent PURE_MAX_PAPERS
+# instead. The slice still clears MIN_DISTINCT_PAPERS, the >=5 sufficient-data
+# gate, the trend engine's 4 and the prediction engine's 5, and keeps the weak
+# subtopic carried by well over MIN_WEAK_TOPIC_PAPERS distinct papers. No year
+# floor: the 10 most recent already land in 2024-2025.
+PURE_MAX_PAPERS = 10
+
 # The weakness must read as a real weak area, not as broken data: low but
 # clearly nonzero. These bound the weak subtopic's ability across the run
 # (it improves with the rest), keeping the aggregate percentage in the
@@ -134,6 +143,7 @@ DEMO_PLANS: list[FamilyPlan] = [
         exam_level="AS",
         component_family="Pure",
         weak_topic_name=WEAK_TOPIC_NAME,
+        max_papers=PURE_MAX_PAPERS,
     ),
     FamilyPlan(
         exam_level="AS",
