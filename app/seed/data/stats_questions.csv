@@ -1,0 +1,399 @@
+paper_ref,question_number,sub_part_label,max_marks,topic_name
+9709_52_FM_2023,1,a,3,Frequency graphs
+9709_52_FM_2023,1,b,2,Interquartile range and percentiles
+9709_52_FM_2023,1,c,3,Mean
+9709_52_FM_2023,2,a,3,Probability distributions
+9709_52_FM_2023,2,b,2,Probability distributions
+9709_52_FM_2023,2,c,2,Variance of a discrete random variable
+9709_52_FM_2023,3,a,3,Binomial distribution
+9709_52_FM_2023,3,b,3,Geometric distribution
+9709_52_FM_2023,3,c,3,Geometric distribution
+9709_52_FM_2023,4,,3,Conditional probability
+9709_52_FM_2023,5,,3,Independent events
+9709_52_FM_2023,6,a,2,Normal distribution
+9709_52_FM_2023,6,b,4,Normal distribution
+9709_52_FM_2023,6,c,5,Normal distribution
+9709_52_FM_2023,7,a,3,Permutations
+9709_52_FM_2023,7,b,3,Permutations
+9709_52_FM_2023,7,c,3,Combinations
+9709_51_MJ_2023,1,a,2,Variance and standard deviation
+9709_51_MJ_2023,1,b,2,Mean
+9709_51_MJ_2023,2,a,2,Combinations
+9709_51_MJ_2023,2,b,3,Combinations
+9709_51_MJ_2023,3,a,1,Permutations
+9709_51_MJ_2023,3,b,2,Permutations
+9709_51_MJ_2023,3,c,3,Permutations
+9709_51_MJ_2023,4,a,4,Normal distribution
+9709_51_MJ_2023,4,b,5,Normal distribution
+9709_51_MJ_2023,5,a,4,Histograms
+9709_51_MJ_2023,5,b,1,Median
+9709_51_MJ_2023,5,c,2,Interquartile range and percentiles
+9709_51_MJ_2023,6,a,2,Binomial distribution
+9709_51_MJ_2023,6,b,2,Binomial distribution
+9709_51_MJ_2023,6,c,2,Binomial distribution
+9709_51_MJ_2023,6,d,5,Approximation to the binomial distribution
+9709_51_MJ_2023,7,a,2,Geometric distribution
+9709_51_MJ_2023,7,b,3,Binomial distribution
+9709_51_MJ_2023,7,c,3,Probability distributions
+9709_52_MJ_2023,1,a,3,Probability distributions
+9709_52_MJ_2023,1,b,3,Variance of a discrete random variable
+9709_52_MJ_2023,2,a,1,Dependent events
+9709_52_MJ_2023,2,b,2,Dependent events
+9709_52_MJ_2023,2,c,3,Dependent events
+9709_52_MJ_2023,3,a,3,Stem-and-leaf diagrams
+9709_52_MJ_2023,3,b,3,Box-and-Whisker plot
+9709_52_MJ_2023,3,c,1,Median
+9709_52_MJ_2023,4,a,1,Geometric distribution
+9709_52_MJ_2023,4,b,2,Geometric distribution
+9709_52_MJ_2023,4,c,3,Conditional probability
+9709_52_MJ_2023,4,d,3,Binomial distribution
+9709_52_MJ_2023,5,a,4,Normal distribution
+9709_52_MJ_2023,5,b,3,Normal distribution
+9709_52_MJ_2023,5,c,5,Approximation to the binomial distribution
+9709_52_MJ_2023,6,a,4,Combinations
+9709_52_MJ_2023,6,b,2,Permutations
+9709_52_MJ_2023,6,c,4,Permutations
+9709_53_MJ_2023,1,a,1,Geometric distribution
+9709_53_MJ_2023,1,b,1,Geometric distribution
+9709_53_MJ_2023,1,c,2,Geometric distribution
+9709_53_MJ_2023,2,,5,Approximation to the binomial distribution
+9709_53_MJ_2023,3,a,4,Probability distributions
+9709_53_MJ_2023,3,b,1,Probability distributions
+9709_53_MJ_2023,3,c,2,Variance of a discrete random variable
+9709_53_MJ_2023,4,a,3,Interquartile range and percentiles
+9709_53_MJ_2023,4,b,2,Interquartile range and percentiles
+9709_53_MJ_2023,4,c,3,Mean
+9709_53_MJ_2023,5,a,4,Independent events
+9709_53_MJ_2023,5,b,3,Conditional probability
+9709_53_MJ_2023,6,a,3,Normal distribution
+9709_53_MJ_2023,6,b,3,Binomial distribution
+9709_53_MJ_2023,6,c,4,Normal distribution
+9709_53_MJ_2023,7,a,3,Permutations
+9709_53_MJ_2023,7,b,3,Permutations
+9709_53_MJ_2023,7,c,3,Combinations
+9709_51_ON_2023,1,a,2,Interquartile range and percentiles
+9709_51_ON_2023,1,b,2,Interquartile range and percentiles
+9709_51_ON_2023,2,a,2,Geometric distribution
+9709_51_ON_2023,2,b,2,Geometric distribution
+9709_51_ON_2023,2,c,3,Binomial distribution
+9709_51_ON_2023,3,a,3,Normal distribution
+9709_51_ON_2023,3,b,3,Normal distribution
+9709_51_ON_2023,3,c,5,Normal distribution
+9709_51_ON_2023,4,a,4,Histograms
+9709_51_ON_2023,4,b,5,Mean
+9709_51_ON_2023,5,a,1,Probability distributions
+9709_51_ON_2023,5,b,3,Probability distributions
+9709_51_ON_2023,5,c,5,Conditional probability
+9709_51_ON_2023,6,a,3,Combinations
+9709_51_ON_2023,6,b,3,Permutations
+9709_51_ON_2023,6,c,4,Permutations
+9709_52_ON_2023,1,a,3,Probability distributions
+9709_52_ON_2023,1,b,2,Variance of a discrete random variable
+9709_52_ON_2023,2,a,2,Geometric distribution
+9709_52_ON_2023,2,b,3,Binomial distribution
+9709_52_ON_2023,3,,5,Approximation to the binomial distribution
+9709_52_ON_2023,4,a,4,Stem-and-leaf diagrams
+9709_52_ON_2023,4,b,3,Interquartile range and percentiles
+9709_52_ON_2023,4,c,1,Median
+9709_52_ON_2023,5,a(i),2,Normal distribution
+9709_52_ON_2023,5,a(ii),3,Normal distribution
+9709_52_ON_2023,5,b,3,Normal distribution
+9709_52_ON_2023,6,a,3,Conditional probability
+9709_52_ON_2023,6,b,4,Dependent events
+9709_52_ON_2023,6,c,2,Conditional probability
+9709_52_ON_2023,7,a,3,Permutations
+9709_52_ON_2023,7,b,3,Permutations
+9709_52_ON_2023,7,c,4,Combinations
+9709_53_ON_2023,1,a,3,Probability distributions
+9709_53_ON_2023,1,b,3,Variance of a discrete random variable
+9709_53_ON_2023,2,a,3,Normal distribution
+9709_53_ON_2023,2,b,3,Normal distribution
+9709_53_ON_2023,3,a,3,Dependent events
+9709_53_ON_2023,3,b,4,Conditional probability
+9709_53_ON_2023,4,a,2,Frequency graphs
+9709_53_ON_2023,4,b,2,Interquartile range and percentiles
+9709_53_ON_2023,4,c,6,Mean
+9709_53_ON_2023,5,a(i),2,Geometric distribution
+9709_53_ON_2023,5,a(ii),1,Geometric distribution
+9709_53_ON_2023,5,b,3,Binomial distribution
+9709_53_ON_2023,5,c,5,Approximation to the binomial distribution
+9709_53_ON_2023,6,a(i),3,Permutations
+9709_53_ON_2023,6,a(ii),2,Permutations
+9709_53_ON_2023,6,b,5,Combinations
+9709_52_FM_2024,1,a,1,Dependent events
+9709_52_FM_2024,1,b,3,Conditional probability
+9709_52_FM_2024,2,a,3,Binomial distribution
+9709_52_FM_2024,2,b,2,Geometric distribution
+9709_52_FM_2024,2,c,3,Geometric distribution
+9709_52_FM_2024,3,a,4,Histograms
+9709_52_FM_2024,3,b,3,Mean
+9709_52_FM_2024,3,c,1,Interquartile range and percentiles
+9709_52_FM_2024,4,a,4,Normal distribution
+9709_52_FM_2024,4,b,3,Normal distribution
+9709_52_FM_2024,4,c,5,Approximation to the binomial distribution
+9709_52_FM_2024,5,a,2,Probability distributions
+9709_52_FM_2024,5,b,3,Probability distributions
+9709_52_FM_2024,5,c,3,Variance of a discrete random variable
+9709_52_FM_2024,6,a,4,Combinations
+9709_52_FM_2024,6,b,2,Permutations
+9709_52_FM_2024,6,c,4,Permutations
+9709_51_MJ_2024,1,a,2,Mean
+9709_51_MJ_2024,1,b,2,Variance and standard deviation
+9709_51_MJ_2024,2,a,4,Normal distribution
+9709_51_MJ_2024,2,b,3,Normal distribution
+9709_51_MJ_2024,3,a,4,Histograms
+9709_51_MJ_2024,3,b,2,Interquartile range and percentiles
+9709_51_MJ_2024,4,a,2,Geometric distribution
+9709_51_MJ_2024,4,b,1,Binomial distribution
+9709_51_MJ_2024,4,c,3,Binomial distribution
+9709_51_MJ_2024,5,a,3,Binomial distribution
+9709_51_MJ_2024,5,b,2,Binomial distribution
+9709_51_MJ_2024,5,c,5,Approximation to the binomial distribution
+9709_51_MJ_2024,6,a,4,Probability distributions
+9709_51_MJ_2024,6,b,3,Probability distributions
+9709_51_MJ_2024,7,a,1,Permutations
+9709_51_MJ_2024,7,b,4,Permutations
+9709_51_MJ_2024,7,c,5,Combinations
+9709_52_MJ_2024,1,a,1,Geometric distribution
+9709_52_MJ_2024,1,b,2,Geometric distribution
+9709_52_MJ_2024,1,c,2,Geometric distribution
+9709_52_MJ_2024,2,a,3,Dependent events
+9709_52_MJ_2024,2,b,2,Conditional probability
+9709_52_MJ_2024,3,a,3,Normal distribution
+9709_52_MJ_2024,3,b,3,Normal distribution
+9709_52_MJ_2024,4,a,3,Stem-and-leaf diagrams
+9709_52_MJ_2024,4,b,3,Box-and-Whisker plot
+9709_52_MJ_2024,4,c,1,Interquartile range and percentiles
+9709_52_MJ_2024,5,a,1,Probability distributions
+9709_52_MJ_2024,5,b,3,Probability distributions
+9709_52_MJ_2024,5,c,3,Variance of a discrete random variable
+9709_52_MJ_2024,6,a,5,Approximation to the binomial distribution
+9709_52_MJ_2024,6,b,3,Binomial distribution
+9709_52_MJ_2024,6,c,2,Mutually exclusive events
+9709_52_MJ_2024,7,a,1,Permutations
+9709_52_MJ_2024,7,b,4,Permutations
+9709_52_MJ_2024,7,c,5,Permutations
+9709_53_MJ_2024,1,a,3,Probability distributions
+9709_53_MJ_2024,1,b,3,Variance of a discrete random variable
+9709_53_MJ_2024,1,c,2,Conditional probability
+9709_53_MJ_2024,2,a,3,Normal distribution
+9709_53_MJ_2024,2,b,5,Normal distribution
+9709_53_MJ_2024,3,a,4,Dependent events
+9709_53_MJ_2024,3,b,3,Dependent events
+9709_53_MJ_2024,4,a,4,Stem-and-leaf diagrams
+9709_53_MJ_2024,4,b,3,Box-and-Whisker plot
+9709_53_MJ_2024,4,c,1,Interquartile range and percentiles
+9709_53_MJ_2024,5,a,1,Geometric distribution
+9709_53_MJ_2024,5,b,2,Geometric distribution
+9709_53_MJ_2024,5,c,3,Binomial distribution
+9709_53_MJ_2024,5,d,5,Approximation to the binomial distribution
+9709_53_MJ_2024,6,a,1,Permutations
+9709_53_MJ_2024,6,b,3,Permutations
+9709_53_MJ_2024,6,c,4,Permutations
+9709_51_ON_2024,1,a,2,Geometric distribution
+9709_51_ON_2024,1,b,2,Geometric distribution
+9709_51_ON_2024,2,a,3,Probability distributions
+9709_51_ON_2024,2,b,3,Variance of a discrete random variable
+9709_51_ON_2024,3,a,2,Frequency graphs
+9709_51_ON_2024,3,b,3,Interquartile range and percentiles
+9709_51_ON_2024,3,c,3,Mean
+9709_51_ON_2024,4,a,3,Dependent events
+9709_51_ON_2024,4,b,3,Conditional probability
+9709_51_ON_2024,5,a,4,Normal distribution
+9709_51_ON_2024,5,b,5,Approximation to the binomial distribution
+9709_51_ON_2024,6,a,5,Normal distribution
+9709_51_ON_2024,6,b,3,Binomial distribution
+9709_51_ON_2024,7,a,2,Permutations
+9709_51_ON_2024,7,b,3,Permutations
+9709_51_ON_2024,7,c,4,Combinations
+9709_52_ON_2024,1,a,1,Conditional probability
+9709_52_ON_2024,1,b,1,Conditional probability
+9709_52_ON_2024,1,c,1,Independent events
+9709_52_ON_2024,1,d,3,Binomial distribution
+9709_52_ON_2024,2,a,1,Permutations
+9709_52_ON_2024,2,b,3,Permutations
+9709_52_ON_2024,3,a,3,Probability distributions
+9709_52_ON_2024,3,b,3,Variance of a discrete random variable
+9709_52_ON_2024,4,a,4,Normal distribution
+9709_52_ON_2024,4,b,3,Normal distribution
+9709_52_ON_2024,5,a,2,Combinations
+9709_52_ON_2024,5,b,4,Combinations
+9709_52_ON_2024,6,a,4,Stem-and-leaf diagrams
+9709_52_ON_2024,6,b,3,Interquartile range and percentiles
+9709_52_ON_2024,6,c,3,Variance and standard deviation
+9709_52_ON_2024,7,a,1,Geometric distribution
+9709_52_ON_2024,7,b,2,Geometric distribution
+9709_52_ON_2024,7,c,3,Binomial distribution
+9709_52_ON_2024,7,d,5,Approximation to the binomial distribution
+9709_53_ON_2024,1,a,2,Probability distributions
+9709_53_ON_2024,1,b,5,Approximation to the binomial distribution
+9709_53_ON_2024,2,a,3,Probability distributions
+9709_53_ON_2024,2,b,1,Mean
+9709_53_ON_2024,3,a,3,Normal distribution
+9709_53_ON_2024,3,b,4,Normal distribution
+9709_53_ON_2024,4,a,4,Frequency graphs
+9709_53_ON_2024,4,b,2,Interquartile range and percentiles
+9709_53_ON_2024,4,c,5,Variance and standard deviation
+9709_53_ON_2024,5,a,3,Binomial distribution
+9709_53_ON_2024,5,b,2,Geometric distribution
+9709_53_ON_2024,5,c,5,Conditional probability
+9709_53_ON_2024,6,a,1,Permutations
+9709_53_ON_2024,6,b,3,Permutations
+9709_53_ON_2024,6,c,4,Permutations
+9709_53_ON_2024,6,d,3,Combinations
+9709_52_FM_2025,1,a,1,Probability distributions
+9709_52_FM_2025,1,b,3,Probability distributions
+9709_52_FM_2025,1,c,2,Variance of a discrete random variable
+9709_52_FM_2025,2,a,1,Independent events
+9709_52_FM_2025,2,b,3,Binomial distribution
+9709_52_FM_2025,2,c,5,Approximation to the binomial distribution
+9709_52_FM_2025,3,a,4,Frequency graphs
+9709_52_FM_2025,3,b,2,Interquartile range and percentiles
+9709_52_FM_2025,3,c,3,Mean
+9709_52_FM_2025,4,a,3,Combinations
+9709_52_FM_2025,4,b,4,Combinations
+9709_52_FM_2025,5,a,3,Normal distribution
+9709_52_FM_2025,5,b,3,Normal distribution
+9709_52_FM_2025,5,c,1,Geometric distribution
+9709_52_FM_2025,5,d,2,Geometric distribution
+9709_52_FM_2025,6,a,1,Permutations
+9709_52_FM_2025,6,b,2,Permutations
+9709_52_FM_2025,6,c,3,Permutations
+9709_52_FM_2025,6,d,4,Combinations
+9709_51_MJ_2025,1,a,1,Normal distribution
+9709_51_MJ_2025,1,b,2,Normal distribution
+9709_51_MJ_2025,2,a,3,Permutations
+9709_51_MJ_2025,2,b,2,Geometric distribution
+9709_51_MJ_2025,2,c,2,Binomial distribution
+9709_51_MJ_2025,3,a,4,Stem-and-leaf diagrams
+9709_51_MJ_2025,3,b,2,Interquartile range and percentiles
+9709_51_MJ_2025,3,c,1,Mean
+9709_51_MJ_2025,3,d,5,Variance and standard deviation
+9709_51_MJ_2025,4,a,4,Normal distribution
+9709_51_MJ_2025,4,b,3,Binomial distribution
+9709_51_MJ_2025,4,c,5,Approximation to the binomial distribution
+9709_51_MJ_2025,5,a,4,Combinations
+9709_51_MJ_2025,5,b,3,Combinations
+9709_51_MJ_2025,6,a,2,Probability distributions
+9709_51_MJ_2025,6,b,4,Probability distributions
+9709_51_MJ_2025,6,c,3,Conditional probability
+9709_52_MJ_2025,1,,3,Probability distributions
+9709_52_MJ_2025,2,,5,Approximation to the binomial distribution
+9709_52_MJ_2025,3,a,2,Dependent events
+9709_52_MJ_2025,3,b,3,Conditional probability
+9709_52_MJ_2025,4,a,1,Independent events
+9709_52_MJ_2025,4,b,2,Geometric distribution
+9709_52_MJ_2025,4,c,3,Geometric distribution
+9709_52_MJ_2025,5,a,2,Frequency graphs
+9709_52_MJ_2025,5,b,2,Frequency graphs
+9709_52_MJ_2025,5,c,6,Mean
+9709_52_MJ_2025,6,a,3,Permutations
+9709_52_MJ_2025,6,b,3,Permutations
+9709_52_MJ_2025,6,c,3,Combinations
+9709_52_MJ_2025,7,a,4,Normal distribution
+9709_52_MJ_2025,7,b,3,Normal distribution
+9709_52_MJ_2025,7,c,5,Binomial distribution
+9709_53_MJ_2025,1,a,2,Mean
+9709_53_MJ_2025,1,b,2,Variance and standard deviation
+9709_53_MJ_2025,2,a,2,Binomial distribution
+9709_53_MJ_2025,2,b,3,Binomial distribution
+9709_53_MJ_2025,3,a,1,Geometric distribution
+9709_53_MJ_2025,3,b,2,Geometric distribution
+9709_53_MJ_2025,3,c,3,Geometric distribution
+9709_53_MJ_2025,4,a,1,Interquartile range and percentiles
+9709_53_MJ_2025,4,b,4,Box-and-Whisker plot
+9709_53_MJ_2025,5,a,3,Dependent events
+9709_53_MJ_2025,5,b,2,Dependent events
+9709_53_MJ_2025,5,c,3,Conditional probability
+9709_53_MJ_2025,6,a,2,Normal distribution
+9709_53_MJ_2025,6,b,3,Normal distribution
+9709_53_MJ_2025,6,c,5,Normal distribution
+9709_53_MJ_2025,7,a,3,Permutations
+9709_53_MJ_2025,7,b,3,Permutations
+9709_53_MJ_2025,7,c,2,Combinations
+9709_53_MJ_2025,7,d,4,Combinations
+9709_55_MJ_2025,1,a,2,Probability distributions
+9709_55_MJ_2025,1,b,4,Variance of a discrete random variable
+9709_55_MJ_2025,2,a,3,Normal distribution
+9709_55_MJ_2025,2,b,4,Normal distribution
+9709_55_MJ_2025,3,a,3,Approximation to the binomial distribution
+9709_55_MJ_2025,3,b,5,Binomial distribution
+9709_55_MJ_2025,4,a,2,Dependent events
+9709_55_MJ_2025,4,b,2,Dependent events
+9709_55_MJ_2025,4,c,3,Conditional probability
+9709_55_MJ_2025,4,d,2,Independent events
+9709_55_MJ_2025,5,a,4,Stem-and-leaf diagrams
+9709_55_MJ_2025,5,b,4,Box-and-Whisker plot
+9709_55_MJ_2025,5,c,2,Interquartile range and percentiles
+9709_55_MJ_2025,6,a,3,Combinations
+9709_55_MJ_2025,6,b,4,Combinations
+9709_55_MJ_2025,6,c,3,Combinations
+9709_51_ON_2025,1,a,3,Probability distributions
+9709_51_ON_2025,1,b,1,Mean
+9709_51_ON_2025,1,c,2,Discrete random variables
+9709_51_ON_2025,2,a,1,Geometric distribution
+9709_51_ON_2025,2,b,3,Geometric distribution
+9709_51_ON_2025,3,a,3,Interquartile range and percentiles
+9709_51_ON_2025,3,b,5,Variance and standard deviation
+9709_51_ON_2025,4,a,3,Dependent events
+9709_51_ON_2025,4,b,2,Dependent events
+9709_51_ON_2025,5,a,3,Binomial distribution
+9709_51_ON_2025,5,b,5,Approximation to the binomial distribution
+9709_51_ON_2025,6,a,4,Normal distribution
+9709_51_ON_2025,6,b,4,Normal distribution
+9709_51_ON_2025,7,a,1,Permutations
+9709_51_ON_2025,7,b,3,Permutations
+9709_51_ON_2025,7,c,3,Permutations
+9709_51_ON_2025,7,d,3,Combinations
+9709_52_ON_2025,1,a,1,Geometric distribution
+9709_52_ON_2025,1,b,2,Geometric distribution
+9709_52_ON_2025,2,a,4,Probability distributions
+9709_52_ON_2025,2,b,3,Variance of a discrete random variable
+9709_52_ON_2025,3,a,4,Normal distribution
+9709_52_ON_2025,3,b,3,Normal distribution
+9709_52_ON_2025,4,a,4,Independent events
+9709_52_ON_2025,4,b,3,Independent events
+9709_52_ON_2025,5,a,4,Histograms
+9709_52_ON_2025,5,b,3,Mean
+9709_52_ON_2025,6,a,1,Binomial distribution
+9709_52_ON_2025,6,b,3,Binomial distribution
+9709_52_ON_2025,6,c,5,Approximation to the binomial distribution
+9709_52_ON_2025,7,a,1,Combinations
+9709_52_ON_2025,7,b,2,Combinations
+9709_52_ON_2025,7,c,3,Combinations
+9709_52_ON_2025,7,d,4,Combinations
+9709_53_ON_2025,1,a,1,Binomial distribution
+9709_53_ON_2025,1,b,3,Binomial distribution
+9709_53_ON_2025,2,,4,Combinations
+9709_53_ON_2025,3,a,3,Permutations
+9709_53_ON_2025,3,b,3,Permutations
+9709_53_ON_2025,4,a,3,Probability distributions
+9709_53_ON_2025,4,b,3,Variance of a discrete random variable
+9709_53_ON_2025,4,c,2,Geometric distribution
+9709_53_ON_2025,5,a,3,Dependent events
+9709_53_ON_2025,5,b,3,Dependent events
+9709_53_ON_2025,5,c,2,Conditional probability
+9709_53_ON_2025,6,a,4,Stem-and-leaf diagrams
+9709_53_ON_2025,6,b,2,Interquartile range and percentiles
+9709_53_ON_2025,6,c,3,Box-and-Whisker plot
+9709_53_ON_2025,6,d,1,Interquartile range and percentiles
+9709_53_ON_2025,7,a,3,Normal distribution
+9709_53_ON_2025,7,b,3,Normal distribution
+9709_53_ON_2025,7,c,4,Normal distribution
+9709_55_ON_2025,1,a,1,Geometric distribution
+9709_55_ON_2025,1,b,2,Geometric distribution
+9709_55_ON_2025,2,a,4,Variance of a discrete random variable
+9709_55_ON_2025,2,b,3,Binomial distribution
+9709_55_ON_2025,3,a,2,Dependent events
+9709_55_ON_2025,3,b,2,Dependent events
+9709_55_ON_2025,3,c,4,Conditional probability
+9709_55_ON_2025,4,a,4,Stem-and-leaf diagrams
+9709_55_ON_2025,4,b,3,Interquartile range and percentiles
+9709_55_ON_2025,4,c,3,Interquartile range and percentiles
+9709_55_ON_2025,4,d,1,Interquartile range and percentiles
+9709_55_ON_2025,5,a,4,Combinations
+9709_55_ON_2025,5,b,3,Permutations
+9709_55_ON_2025,5,c,3,Permutations
+9709_55_ON_2025,6,a,3,Normal distribution
+9709_55_ON_2025,6,b,3,Normal distribution
+9709_55_ON_2025,6,c,5,Approximation to the binomial distribution

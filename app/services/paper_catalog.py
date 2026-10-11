@@ -254,6 +254,20 @@ def variant_code(component: int | None, variant: int) -> str:
     return f"{component}{variant}" if component is not None else str(variant)
 
 
+def variant_display(component: int, variant: int) -> str:
+    """The BRD's combined variant code, composed numerically: "12" for
+    component 1, variant 2 (component * 10 + variant).
+
+    docs/specs/topic-analysis-service.md ("Variant display") pins this form to
+    the BRD's "11, 12, 13" examples and asks for it as a shared helper — the
+    Topic Analysis lost-mark table and the Record question table both show a
+    variant this way. `variant_code` above renders the same code by digit
+    concatenation for the Record cascade (and tolerates an unknown component);
+    this is the numeric form the Topic Analysis spec confirms against the BRD.
+    """
+    return str(component * 10 + variant)
+
+
 def paper_reference(paper: Paper) -> str:
     """Cambridge-style identity for a resolved paper, e.g. "9709/12 · May/June 2025"."""
     return (
