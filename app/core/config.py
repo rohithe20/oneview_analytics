@@ -22,6 +22,20 @@ class Settings(BaseSettings):
         return self.ENVIRONMENT.strip().lower() in LOCAL_ENVIRONMENTS
 
     @model_validator(mode="after")
+    def _normalise_database_url_driver(self) -> "Settings":
+        """Add the psycopg driver prefix SQLAlchemy needs.
+
+        Railway hands out a bare ``postgresql://`` URL, but SQLAlchemy + psycopg 3
+        needs ``postgresql+psycopg://``. Rewrite the bare form; leave a URL that
+        already names the driver untouched.
+        """
+        if self.DATABASE_URL.startswith("postgresql://"):
+            self.DATABASE_URL = self.DATABASE_URL.replace(
+                "postgresql://", "postgresql+psycopg://", 1
+            )
+        return self
+
+    @model_validator(mode="after")
     def _reject_the_placeholder_secret_outside_local(self) -> "Settings":
         """Refuse to boot a deployed app with the public placeholder key.
 

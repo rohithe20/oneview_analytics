@@ -19,9 +19,10 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=settings.SECRET_KEY,
     same_site="lax",
-    # Secure cookies need TLS, which local dev does not have. Same notion of
-    # "local" as the SECRET_KEY startup guard, so the two cannot drift apart.
-    https_only=not settings.is_local,
+    # Secure cookies need TLS, which local dev does not have. Only production
+    # runs over HTTPS, so the cookie is marked secure there and plain HTTP
+    # everywhere else keeps working.
+    https_only=settings.ENVIRONMENT == "production",
 )
 
 app.include_router(auth_router)
